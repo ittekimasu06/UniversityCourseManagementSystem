@@ -9,6 +9,7 @@ import java.util.*;
 import com.mysql.cj.xdevapi.Statement;
 
 import model.Student;
+import model.Lecturer;
 
 public class DAO {
     String jdbcURL = "jdbc:mysql://127.0.0.1:3306/universitydb";
@@ -104,20 +105,113 @@ public class DAO {
             e.printStackTrace();
         }
     }
+    
+
+    // CRUD operations for Lecturer
+    public boolean addLecturer(Lecturer lecturer) {
+        String sql = "INSERT INTO Lecturer (name, gender, dateOfBirth, lecturerID) VALUES (?, ?, ?, ?)";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, lecturer.getName());
+            statement.setBoolean(2, lecturer.getGender());
+            statement.setDate(3, new Date(lecturer.getDOB().getTime()));
+            statement.setString(4, lecturer.getLecturerID());
+            statement.executeUpdate();
+            return true;
+        } catch (SQLException e) {
+            if (e.getSQLState().equals("23000")) { // SQLState 23000 indicates a unique constraint violation
+                System.out.println("Lỗi khi thêm Lecturer!");
+            } else {
+                e.printStackTrace();
+            }
+        }
+        return false;
+    }
+
+    public List<Lecturer> getAllLecturers() {
+        List<Lecturer> lecturers = new ArrayList<>();
+        String sql = "SELECT * FROM Lecturer";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                String name = resultSet.getString("name");
+                boolean gender = resultSet.getBoolean("gender");
+                Date dateOfBirth = resultSet.getDate("dateOfBirth");
+                String lecturerID = resultSet.getString("lecturerID");
+                lecturers.add(new Lecturer(name, gender, dateOfBirth, lecturerID));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return lecturers;
+    }
+
+    public Lecturer searchLecturerByLecturerID(String lecturerID) {
+        String sql = "SELECT * FROM Lecturer WHERE lecturerID = ?";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, lecturerID);
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                String name = resultSet.getString("name");
+                boolean gender = resultSet.getBoolean("gender");
+                Date dateOfBirth = resultSet.getDate("dateOfBirth");
+                return new Lecturer(name, gender, dateOfBirth, lecturerID);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public void updateLecturer(Lecturer lecturer) {
+        String sql = "UPDATE Lecturer SET name = ?, gender = ?, dateOfBirth = ? WHERE lecturerID = ?";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, lecturer.getName());
+            statement.setBoolean(2, lecturer.getGender());
+            statement.setDate(3, new java.sql.Date(lecturer.getDOB().getTime()));
+            statement.setString(4, lecturer.getLecturerID());
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void deleteLecturer(String lecturerID) {
+        String sql = "DELETE FROM Lecturer WHERE lecturerID = ?";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, lecturerID);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    
+
+    // Cho học sinh đăng ký một Course
+    public void studentEnrollCourse(String studentID, String courseID) {
+        String sql = "INSERT INTO StudentCourse (studentID, courseID) VALUES (?, ?)";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, studentID);
+            statement.setString(2, courseID);
+            statement.executeUpdate();
+        } catch(SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Assign lecturer to a course
+    public void lecturerAssignCourse(String lecturerID, String courseID) {
+        String sql = "INSERT INTO LecturerCourse (lecturerID, courseID) VALUES (?, ?)";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, lecturerID);
+            statement.setString(2, courseID);
+            statement.executeUpdate();
+        } catch(SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
     public static void main(String[] args) {
         DAO dao = new DAO();
-        // Example usage:
-        // Create a new student
-        // Student student = new Student("John Doe", true, new Date(), "S12345");
-        // dao.addStudent(student);
-        // Get a student by ID
-        // Student retrievedStudent = dao.getStudentById(1);
-        // System.out.println("Retrieved Student: " + retrievedStudent.getName());
-        // Update a student
-        // retrievedStudent.setName("John Updated");
-        // dao.updateStudent(retrievedStudent);
-        // Delete a student
-        // dao.deleteStudent(1);
+        
     }
 }
