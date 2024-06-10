@@ -13,21 +13,17 @@ import java.util.Map;
 
 
 import controller.DAO;
-import model.Lecturer;
+import model.Course;
 
-public class LecturerView extends JFrame {
-    private JTextField nameField;
-    private JTextField genderField;
-    private JTextField dobField;
-    private JTextField lecturerIDField;
-    private JTable lecturerTable;
+public class CourseView extends JFrame {
+    private JTextField courseNameField;
+    private JTextField courseIdField;
+    private JTable courseTable;
     private DAO dao;
-    private Map<String, Lecturer> lecturerMap;
 
-    public LecturerView() {
+    public CourseView() {
         dao = new DAO();
-        lecturerMap = dao.getAllLecturersMap(); // Assuming you have this method to get lecturers as a map
-        setTitle("Lecturer Management");
+        setTitle("Course Management");
         setSize(800, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
@@ -43,21 +39,13 @@ public class LecturerView extends JFrame {
         formPanel.setLayout(new GridLayout(0, 1, 10, 10));
         formPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        formPanel.add(new JLabel("Name:"));
-        nameField = new JTextField();
-        formPanel.add(nameField);
+        formPanel.add(new JLabel("Course Name:"));
+        courseNameField = new JTextField();
+        formPanel.add(courseNameField);
 
-        formPanel.add(new JLabel("Gender (true: male/false: female):"));
-        genderField = new JTextField();
-        formPanel.add(genderField);
-
-        formPanel.add(new JLabel("Date of Birth (yyyy-mm-dd):"));
-        dobField = new JTextField();
-        formPanel.add(dobField);
-
-        formPanel.add(new JLabel("Lecturer ID:"));
-        lecturerIDField = new JTextField();
-        formPanel.add(lecturerIDField);
+        formPanel.add(new JLabel("Course ID:"));
+        courseIdField = new JTextField();
+        formPanel.add(courseIdField);
 
         JPanel buttonPanel = new JPanel();
         buttonPanel.setLayout(new GridLayout(0, 1, 10, 10));
@@ -67,7 +55,7 @@ public class LecturerView extends JFrame {
         addButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                addLecturer();
+                addCourse();
             }
         });
         buttonPanel.add(addButton);
@@ -76,7 +64,7 @@ public class LecturerView extends JFrame {
         updateButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                updateLecturer();
+                updateCourse();
             }
         });
         buttonPanel.add(updateButton);
@@ -85,7 +73,7 @@ public class LecturerView extends JFrame {
         deleteButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                deleteLecturer();
+                deleteCourse();
             }
         });
         buttonPanel.add(deleteButton);
@@ -103,7 +91,7 @@ public class LecturerView extends JFrame {
         backButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                dispose(); // Close the current LecturerView window
+                dispose(); // Close the current CourseView window
                 new MainMenu().setVisible(true); // Show the MainMenu
             }
         });
@@ -114,11 +102,11 @@ public class LecturerView extends JFrame {
 
         mainPanel.add(leftPanel, BorderLayout.WEST);
 
-        lecturerTable = new JTable();
-        mainPanel.add(new JScrollPane(lecturerTable), BorderLayout.CENTER);
+        courseTable = new JTable();
+        mainPanel.add(new JScrollPane(courseTable), BorderLayout.CENTER);
 
         add(mainPanel);
-        displayLecturers();
+        displayCourses();
     }
 
     private void openSearchByNameDialog() {
@@ -143,7 +131,7 @@ public class LecturerView extends JFrame {
         okButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                searchLecturerByName(searchNameField.getText());
+                searchCourseByName(searchNameField.getText());
                 searchDialog.dispose();
             }
         });
@@ -154,84 +142,67 @@ public class LecturerView extends JFrame {
         searchDialog.setVisible(true);
     }
 
-    private void addLecturer() {
-        String name = nameField.getText();
-        boolean gender = Boolean.parseBoolean(genderField.getText());
-        Date dob = Date.valueOf(dobField.getText());
-        String lecturerID = lecturerIDField.getText();
-
-        Lecturer lecturer = new Lecturer(name, gender, dob, lecturerID);
-        boolean success = dao.addLecturer(lecturer);
-
+    private void addCourse() {
+        String name = courseNameField.getText();
+        String id = courseIdField.getText();
+        Course course = new Course(name, id);
+        boolean success = dao.addCourse(course);
         if (success) {
-            JOptionPane.showMessageDialog(this, "Lecturer added successfully!");
-            displayLecturers(); // Refresh lecturer list after adding
+            JOptionPane.showMessageDialog(this, "Course added successfully!");
+            displayCourses();
         } else {
-            JOptionPane.showMessageDialog(this, "Lecturer ID bị trùng");
+            JOptionPane.showMessageDialog(this, "Failed to add course.");
         }
     }
 
-    private void updateLecturer() {
-        String name = nameField.getText();
-        boolean gender = Boolean.parseBoolean(genderField.getText());
-        Date dob = Date.valueOf(dobField.getText());
-        String lecturerID = lecturerIDField.getText();
-
-        Lecturer lecturer = new Lecturer(name, gender, dob, lecturerID);
-        dao.updateLecturer(lecturer);
-        JOptionPane.showMessageDialog(this, "Lecturer updated successfully!");
-        displayLecturers(); // Refresh lecturer list after updating
+    private void updateCourse() {
+        String name = courseNameField.getText();
+        String id = courseIdField.getText();
+        Course course = new Course(name, id);
+        dao.updateCourse(course);
+        JOptionPane.showMessageDialog(this, "Course updated successfully!");
+        displayCourses();
     }
 
-    private void deleteLecturer() {
-        String lecturerID = lecturerIDField.getText();
-        Lecturer lecturer = dao.searchLecturerByLecturerID(lecturerID);
+    private void deleteCourse() {
+        String id = courseIdField.getText();
+        dao.deleteCourse(id);
+        JOptionPane.showMessageDialog(this, "Course deleted successfully!");
+        displayCourses();
+    }
 
-        if (lecturer != null) {
-            dao.deleteLecturer(lecturer.getLecturerID());
-            JOptionPane.showMessageDialog(this, "Lecturer deleted successfully!");
-            displayLecturers(); // Refresh lecturer list after deleting
+    private void searchCourseByName(String name) {
+        Map<String, Course> courseMap = dao.getAllCoursesMap(name);
+        if (courseMap != null && !courseMap.isEmpty()) {
+            Course course = courseMap.values().iterator().next();
+            courseNameField.setText(course.getCourseName());
+            courseIdField.setText(course.getCourseID());
+            JOptionPane.showMessageDialog(this, "Course found!");
         } else {
-            JOptionPane.showMessageDialog(this, "Lecturer not found");
+            JOptionPane.showMessageDialog(this, "Course not found");
         }
     }
 
-    private void searchLecturerByName(String name) {
-        Lecturer lecturer = lecturerMap.get(name);
-
-        if (lecturer != null) {
-            nameField.setText(lecturer.getName());
-            genderField.setText(String.valueOf(lecturer.getGender()));
-            dobField.setText(lecturer.getDOB().toString());
-            lecturerIDField.setText(lecturer.getLecturerID());
-            JOptionPane.showMessageDialog(this, "Lecturer found!");
-        } else {
-            JOptionPane.showMessageDialog(this, "Lecturer not found");
-        }
-    }
-
-    private void displayLecturers() {
+    private void displayCourses() {
         DefaultTableModel model = new DefaultTableModel();
-        model.addColumn("Name");
-        model.addColumn("Gender");
-        model.addColumn("Date of Birth");
-        model.addColumn("Lecturer ID");
+        model.addColumn("Course Name");
+        model.addColumn("Course ID");
 
-        List<Lecturer> lecturers = dao.getAllLecturers(); // Sử dụng phương thức đã có trong DAO để lấy danh sách giảng viên
+        List<Course> courses = dao.getAllCourses();
 
-        for (Lecturer lecturer : lecturers) {
-            Object[] rowData = {lecturer.getName(), lecturer.getGender(), lecturer.getDOB(), lecturer.getLecturerID()};
+        for (Course course : courses) {
+            Object[] rowData = {course.getCourseName(), course.getCourseID()};
             model.addRow(rowData);
         }
 
-        lecturerTable.setModel(model); // Đặt mô hình dữ liệu cho JTable
+        courseTable.setModel(model);
     }
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                new LecturerView().setVisible(true);
+                new CourseView().setVisible(true);
             }
         });
     }

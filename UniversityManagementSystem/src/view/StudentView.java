@@ -1,7 +1,7 @@
 package view;
-
 import javax.swing.*;
 import java.util.List;
+import java.util.Map;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -16,6 +16,13 @@ import java.sql.Date;
 import controller.DAO;
 import model.Student;
 
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.List;
+import java.util.Map;
+import java.sql.Date;
 
 public class StudentView extends JFrame {
     private JTextField nameField;
@@ -24,25 +31,32 @@ public class StudentView extends JFrame {
     private JTextField studentIDField;
     private JTable studentTable;
     private DAO dao;
+    private Map<String, Student> studentMap;
 
     public StudentView() {
         dao = new DAO();
+        studentMap = dao.getAllStudentsMap(); // Assuming you have this method to get students as a map
         setTitle("Student Management");
-        setSize(600, 400);
+        setSize(800, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
-        JPanel panel = new JPanel();
-        panel.setLayout(new BorderLayout());
+        JPanel mainPanel = new JPanel();
+        mainPanel.setLayout(new BorderLayout(10, 10));
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
+        JPanel leftPanel = new JPanel();
+        leftPanel.setLayout(new BorderLayout(10, 10));
+        
         JPanel formPanel = new JPanel();
-        formPanel.setLayout(new GridLayout(6, 2));
+        formPanel.setLayout(new GridLayout(0, 1, 10, 10));
+        formPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
         formPanel.add(new JLabel("Name:"));
         nameField = new JTextField();
         formPanel.add(nameField);
 
-        formPanel.add(new JLabel("Gender (true: male/false: female:"));
+        formPanel.add(new JLabel("Gender (true: male/false: female):"));
         genderField = new JTextField();
         formPanel.add(genderField);
 
@@ -54,6 +68,10 @@ public class StudentView extends JFrame {
         studentIDField = new JTextField();
         formPanel.add(studentIDField);
 
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setLayout(new GridLayout(0, 1, 10, 10));
+        buttonPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
         JButton addButton = new JButton("Add");
         addButton.addActionListener(new ActionListener() {
             @Override
@@ -61,7 +79,7 @@ public class StudentView extends JFrame {
                 addStudent();
             }
         });
-        formPanel.add(addButton);
+        buttonPanel.add(addButton);
 
         JButton updateButton = new JButton("Update");
         updateButton.addActionListener(new ActionListener() {
@@ -70,7 +88,7 @@ public class StudentView extends JFrame {
                 updateStudent();
             }
         });
-        formPanel.add(updateButton);
+        buttonPanel.add(updateButton);
 
         JButton deleteButton = new JButton("Delete");
         deleteButton.addActionListener(new ActionListener() {
@@ -79,25 +97,70 @@ public class StudentView extends JFrame {
                 deleteStudent();
             }
         });
-        formPanel.add(deleteButton);
+        buttonPanel.add(deleteButton);
 
-        JButton searchButton = new JButton("Search by ID");
+        JButton searchButton = new JButton("Search by Name");
         searchButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                searchStudent();
+                openSearchByNameDialog();
             }
         });
-        formPanel.add(searchButton);
+        buttonPanel.add(searchButton);
 
-        panel.add(formPanel, BorderLayout.NORTH);
+        JButton backButton = new JButton("Back");
+        backButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                dispose(); // Close the current StudentView window
+                new MainMenu().setVisible(true); // Show the MainMenu
+            }
+        });
+        buttonPanel.add(backButton);
 
-        // Add table to display students
+        leftPanel.add(formPanel, BorderLayout.NORTH);
+        leftPanel.add(buttonPanel, BorderLayout.SOUTH);
+
+        mainPanel.add(leftPanel, BorderLayout.WEST);
+
         studentTable = new JTable();
-        panel.add(new JScrollPane(studentTable), BorderLayout.CENTER);
+        mainPanel.add(new JScrollPane(studentTable), BorderLayout.CENTER);
 
-        add(panel);
+        add(mainPanel);
         displayStudents();
+    }
+
+    private void openSearchByNameDialog() {
+        JDialog searchDialog = new JDialog(this, "Search by Name", true);
+        searchDialog.setLayout(new BorderLayout());
+        searchDialog.setSize(300, 150);
+        searchDialog.setLocationRelativeTo(this);
+
+        JPanel inputPanel = new JPanel();
+        inputPanel.setLayout(new BorderLayout(10, 10));
+        inputPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
+        JTextField searchNameField = new JTextField();
+        inputPanel.add(new JLabel("Enter name:"), BorderLayout.NORTH);
+        inputPanel.add(searchNameField, BorderLayout.CENTER);
+
+        searchDialog.add(inputPanel, BorderLayout.CENTER);
+
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
+        JButton okButton = new JButton("OK");
+        okButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                searchStudentByName(searchNameField.getText());
+                searchDialog.dispose();
+            }
+        });
+        buttonPanel.add(okButton);
+
+        searchDialog.add(buttonPanel, BorderLayout.SOUTH);
+
+        searchDialog.setVisible(true);
     }
 
     private void addStudent() {
@@ -142,14 +205,14 @@ public class StudentView extends JFrame {
         }
     }
 
-    private void searchStudent() {
-        String studentID = studentIDField.getText();
-        Student student = dao.searchStudentByStudentID(studentID);
+    private void searchStudentByName(String name) {
+        Student student = studentMap.get(name);
 
         if (student != null) {
             nameField.setText(student.getName());
             genderField.setText(String.valueOf(student.getGender()));
             dobField.setText(student.getDOB().toString());
+            studentIDField.setText(student.getStudentID());
             JOptionPane.showMessageDialog(this, "Student found!");
         } else {
             JOptionPane.showMessageDialog(this, "Student not found");

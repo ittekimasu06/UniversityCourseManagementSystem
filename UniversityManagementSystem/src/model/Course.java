@@ -3,14 +3,12 @@ package model;
 public class Course {
 	 private String courseName;
 	    private String courseID;
-	    private double mark;
 
-	    public Course(String courseName, String courseID, double mark) {
+	    public Course(String courseName, String courseID) {
 	        this.courseName = courseName;
 	        this.courseID = courseID;
-	        this.mark = mark;
 	    }
-	    
+	     
 	    public void setCourseName(String courseName) {
 	    	this.courseName = courseName;
 	    }
@@ -25,13 +23,5 @@ public class Course {
 	    
 	    public String getCourseID() {
 	    	return courseID;
-	    }
-	    
-	    public void setMark(double mark) {
-	    	this.mark = mark;
-	    }
-	    
-	    public double getMark() {
-	    	return mark;
 	    }
 }

@@ -7,12 +7,12 @@ import java.util.Date;
 
 public class Student extends Person {
 	private String studentID;
-    private List<Course> courses;
-
+//    private List<Course> courses;
+ 
     public Student(String name, boolean gender, Date dateOfBirth, String studentID) {
         super(name, gender, dateOfBirth);
         this.studentID = studentID;
-        this.courses = new ArrayList<>();
+//        this.courses = new ArrayList<>();
     }
     
     public void setStudentID(String studentID) {
@@ -23,11 +23,23 @@ public class Student extends Person {
     	return studentID;
     }
 
-    public void enrollCourse(Course course) {
-        this.courses.add(course);
-    }
-    
-    public List<Course> getCourses() {
-		return courses;
-	}
+//    public void enrollCourse(Course course) {
+//        this.courses.add(course);
+//    }
+//    
+//    public List<Course> getCourses() {
+//		return courses;
+//	}
+//    
+//    public double getAverageMark() {
+//        if (courses.isEmpty()) {
+//            return 0.0;
+//        }
+//
+//        double totalMarks = 0.0;
+//        for (Course course : courses) {
+//            totalMarks += course.getMark();
+//        }
+//        return totalMarks / courses.size();
+//    }
 }

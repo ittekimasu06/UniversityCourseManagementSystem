@@ -6,10 +6,12 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
-import com.mysql.cj.xdevapi.Statement;
 
 import model.Student;
+import model.Teach;
+import model.Course;
 import model.Lecturer;
+import model.Enrollment;
 
 public class DAO {
     String jdbcURL = "jdbc:mysql://127.0.0.1:3306/universitydb";
@@ -72,7 +74,7 @@ public class DAO {
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
                 int id = resultSet.getInt("id");
-                String name = resultSet.getString("name");
+                 String name = resultSet.getString("name");
                 boolean gender = resultSet.getBoolean("gender");
                 Date dateOfBirth = resultSet.getDate("dateOfBirth");
                 return new Student(name, gender, dateOfBirth, studentID);
@@ -106,6 +108,39 @@ public class DAO {
         }
     }
     
+    //tìm kiếm student bằng map, dùng để tìm kiếm bằng tên
+    public Map<String, Student> getAllStudentsMap() {
+        Map<String, Student> studentMap = new HashMap<>();
+        String sql = "SELECT * FROM Student";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                String name = resultSet.getString("name");
+                boolean gender = resultSet.getBoolean("gender");
+                Date dateOfBirth = resultSet.getDate("dateOfBirth");
+                String studentID = resultSet.getString("studentID");
+                studentMap.put(name, new Student(name, gender, dateOfBirth, studentID));
+            }
+        } catch(SQLException e) {
+            e.printStackTrace();
+        }
+        return studentMap;
+    }
+    
+    //lấy id từ Student
+    public List<String> getAllStudentIDs() {
+        List<String> studentIDs = new ArrayList<>();
+        String sql = "SELECT studentID FROM Student";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                studentIDs.add(resultSet.getString("studentID"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return studentIDs;
+    }
 
     // CRUD operations for Lecturer
     public boolean addLecturer(Lecturer lecturer) {
@@ -186,29 +221,197 @@ public class DAO {
     }
     
 
-    // Cho học sinh đăng ký một Course
-    public void studentEnrollCourse(String studentID, String courseID) {
-        String sql = "INSERT INTO StudentCourse (studentID, courseID) VALUES (?, ?)";
+     
+   
+    
+    //tìm kiếm lecturer bằng map, dùng để tìm kiếm bằng tên
+    public Map<String, Lecturer> getAllLecturersMap() {
+        Map<String, Lecturer> lecturerMap = new HashMap<>();
+        String sql = "SELECT * FROM Lecturer";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setString(1, studentID);
-            statement.setString(2, courseID);
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                String name = resultSet.getString("name");
+                boolean gender = resultSet.getBoolean("gender");
+                Date dateOfBirth = resultSet.getDate("dateOfBirth");
+                String lecturerID = resultSet.getString("lecturerID");
+                Lecturer lecturer = new Lecturer(name, gender, dateOfBirth, lecturerID);
+                lecturerMap.put(name, lecturer);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return lecturerMap;
+    }
+    
+    //
+ // Thêm khóa học mới
+    public boolean addCourse(Course course) {
+        String sql = "INSERT INTO Course (courseID, courseName) VALUES (?, ?)";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, course.getCourseID());
+            statement.setString(2, course.getCourseName());
             statement.executeUpdate();
-        } catch(SQLException e) {
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    // Cập nhật thông tin khóa học
+    public void updateCourse(Course course) {
+        String sql = "UPDATE Course SET courseName = ? WHERE courseID = ?";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, course.getCourseName());
+            statement.setString(2, course.getCourseID());
+            statement.executeUpdate();
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-    // Assign lecturer to a course
-    public void lecturerAssignCourse(String lecturerID, String courseID) {
-        String sql = "INSERT INTO LecturerCourse (lecturerID, courseID) VALUES (?, ?)";
+    // Xóa khóa học
+    public void deleteCourse(String courseID) {
+        String sql = "DELETE FROM Course WHERE courseID = ?";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, courseID);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Tìm kiếm khóa học theo tên
+    public Map<String, Course> getAllCoursesMap(String courseName) {
+        Map<String, Course> courseMap = new HashMap<>();
+        String sql = "SELECT * FROM Course WHERE courseName LIKE ?";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, "%" + courseName + "%");
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                String id = resultSet.getString("courseID");
+                String name = resultSet.getString("courseName");
+                Course course = new Course(name, id);
+                courseMap.put(name, course);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return courseMap;
+    }
+
+    // Lấy danh sách tất cả các khóa học
+    public List<Course> getAllCourses() {
+        List<Course> courseList = new ArrayList<>();
+        String sql = "SELECT * FROM Course";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                String courseID = resultSet.getString("courseID");
+                String courseName = resultSet.getString("courseName");
+                Course course = new Course(courseName, courseID);
+                courseList.add(course);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return courseList;
+    }
+    
+    //lấy id từ Course
+    public List<String> getAllCourseIDs() {
+        List<String> courseIDs = new ArrayList<>();
+        String sql = "SELECT courseID FROM Course";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                courseIDs.add(resultSet.getString("courseID"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return courseIDs;
+    }
+    
+    //thêm các trường thông tin vào bảng Enroll ()
+    public boolean enrollStudentInCourseAndAssignMark(String studentID, String courseID, double mark) {
+        String sql = "INSERT INTO Enroll (studentID, courseID, mark) VALUES (?, ?, ?)";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, studentID);
+            statement.setString(2, courseID);
+            statement.setDouble(3, mark);
+            statement.executeUpdate();
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+    
+    //lấy hết dữ liệu từ bảng Enroll
+    public List<Enrollment> getAllEnrollments() {
+        List<Enrollment> enrollments = new ArrayList<>();
+        String sql = "SELECT * FROM Enroll";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                String studentID = resultSet.getString("studentID");
+                String courseID = resultSet.getString("courseID");
+                double mark = resultSet.getDouble("mark");
+                enrollments.add(new Enrollment(studentID, courseID, mark));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return enrollments;
+    }
+    
+    // lấy id từ Lecturer
+    public List<String> getAllLecturerIDs() {
+        List<String> lecturerIDs = new ArrayList<>();
+        String sql = "SELECT lecturerID FROM Lecturer";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                lecturerIDs.add(resultSet.getString("lecturerID"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return lecturerIDs;
+    }
+
+    // thêm các trường thông tin vào bảng Teach
+    public boolean addTeach(String lecturerID, String courseID) {
+        String sql = "INSERT INTO Teach (lecturerID, courseID) VALUES (?, ?)";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, lecturerID);
             statement.setString(2, courseID);
             statement.executeUpdate();
-        } catch(SQLException e) {
+            return true;
+        } catch (SQLException e) {
             e.printStackTrace();
+            return false;
         }
     }
+
+    // Method to get all Teach records
+    public List<Teach> getAllTeach() {
+        List<Teach> teaches = new ArrayList<>();
+        String sql = "SELECT * FROM Teach";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                String lecturerID = resultSet.getString("lecturerID");
+                String courseID = resultSet.getString("courseID");
+                teaches.add(new Teach(lecturerID, courseID));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return teaches;
+    }   
 
     public static void main(String[] args) {
         DAO dao = new DAO();
