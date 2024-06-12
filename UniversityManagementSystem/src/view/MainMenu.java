@@ -5,11 +5,6 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
 public class MainMenu extends JFrame {
     public MainMenu() {
         setTitle("University Management System");
@@ -26,6 +21,7 @@ public class MainMenu extends JFrame {
         studentButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+            	dispose();
                 new StudentView().setVisible(true);
             }
         });
@@ -35,6 +31,7 @@ public class MainMenu extends JFrame {
         lecturerButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+            	dispose();
                 new LecturerView().setVisible(true);
             }
         });
@@ -44,6 +41,7 @@ public class MainMenu extends JFrame {
         studentEnrollButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+            	dispose();
                 new StudentEnrollCourse().setVisible(true);
             }
         });
@@ -53,7 +51,8 @@ public class MainMenu extends JFrame {
         assignLecturerButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new LecturerTeachCourse().setVisible(true); // Make sure the class name matches
+            	dispose();
+                new LecturerTeachCourse().setVisible(true); 
             }
         });
 
@@ -62,6 +61,7 @@ public class MainMenu extends JFrame {
         courseButton.addActionListener(new ActionListener() {
         	@Override
         	public void actionPerformed(ActionEvent e) {
+        		dispose();
         		new CourseView().setVisible(true);
         	}
         });

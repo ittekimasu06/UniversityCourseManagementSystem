@@ -58,7 +58,9 @@ public class DAO {
                 boolean gender = resultSet.getBoolean("gender");
                 Date dateOfBirth = resultSet.getDate("dateOfBirth");
                 String studentID = resultSet.getString("studentID");
-                students.add(new Student(name, gender, dateOfBirth, studentID));
+                double gpa = calculateGPA(studentID);
+                
+                students.add(new Student(name, gender, dateOfBirth, studentID, gpa));
             }
         } catch(SQLException e) {
             e.printStackTrace();
@@ -77,7 +79,9 @@ public class DAO {
                  String name = resultSet.getString("name");
                 boolean gender = resultSet.getBoolean("gender");
                 Date dateOfBirth = resultSet.getDate("dateOfBirth");
-                return new Student(name, gender, dateOfBirth, studentID);
+                double gpa = calculateGPA(studentID);
+                
+                return new Student(name, gender, dateOfBirth, studentID, gpa);
             }
         } catch(SQLException e) {
             e.printStackTrace();
@@ -108,6 +112,7 @@ public class DAO {
         }
     }
     
+    
     //tìm kiếm student bằng map, dùng để tìm kiếm bằng tên
     public Map<String, Student> getAllStudentsMap() {
         Map<String, Student> studentMap = new HashMap<>();
@@ -119,7 +124,9 @@ public class DAO {
                 boolean gender = resultSet.getBoolean("gender");
                 Date dateOfBirth = resultSet.getDate("dateOfBirth");
                 String studentID = resultSet.getString("studentID");
-                studentMap.put(name, new Student(name, gender, dateOfBirth, studentID));
+                double gpa = calculateGPA(studentID);
+                
+                studentMap.put(name, new Student(name, gender, dateOfBirth, studentID, gpa));
             }
         } catch(SQLException e) {
             e.printStackTrace();
@@ -140,6 +147,71 @@ public class DAO {
             e.printStackTrace();
         }
         return studentIDs;
+    }
+    
+    //lấy tên từ Student
+    public List<String> getAllStudentNames() {
+        List<String> studentNames = new ArrayList<>();
+        String sql = "SELECT name FROM Student";
+        try (PreparedStatement statement = connection.prepareStatement(sql); 
+        	ResultSet rs = statement.executeQuery()) {
+            while (rs.next()) {
+                studentNames.add(rs.getString("name"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return studentNames;
+    }
+    
+    //lấy tên từ StudentID
+    public String getStudentNameByID(String studentID) {
+        String sql = "SELECT name FROM Student WHERE studentID = ?";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, studentID);
+            ResultSet rs = statement.executeQuery();
+            if (rs.next()) {
+                return rs.getString("name");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+    
+    //lấy StudentID từ tên
+    public String getStudentIDByName(String name) {
+        String sql = "SELECT studentID FROM Student WHERE name = ?";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, name);
+            ResultSet rs = statement.executeQuery();
+            if (rs.next()) {
+                return rs.getString("studentID");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+    
+    //tính gpa cho sinh viên
+    public double calculateGPA(String studentID) {
+        double gpa = 0.0;
+        int count = 0;
+        String sql = "SELECT mark FROM Enroll WHERE studentID = ?";
+        
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, studentID);
+            ResultSet rs = statement.executeQuery();
+            
+            while (rs.next()) {
+                gpa += rs.getDouble("mark");
+                count++;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return count > 0 ? gpa / count : 0.0;
     }
 
     // CRUD operations for Lecturer
@@ -220,9 +292,6 @@ public class DAO {
         }
     }
     
-
-     
-   
     
     //tìm kiếm lecturer bằng map, dùng để tìm kiếm bằng tên
     public Map<String, Lecturer> getAllLecturersMap() {
@@ -332,6 +401,51 @@ public class DAO {
             e.printStackTrace();
         }
         return courseIDs;
+    }
+    
+    //lấy tên từ Course
+    public List<String> getAllCourseNames() {
+        List<String> courseNames = new ArrayList<>();
+        String sql = "SELECT courseName FROM Course";
+        try (PreparedStatement statement = connection.prepareStatement(sql);
+        	ResultSet rs = statement.executeQuery(sql)) {
+            while (rs.next()) {
+                courseNames.add(rs.getString("courseName"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return courseNames;
+    }
+    
+    //lấy tên từ CourseID
+    public String getCourseNameByID(String courseID) {
+        String sql = "SELECT courseName FROM Course WHERE courseID = ?";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, courseID);
+            ResultSet rs = statement.executeQuery();
+            if (rs.next()) {
+                return rs.getString("courseName");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+    
+    //lấy CourseID từ tên
+    public String getCourseIDByName(String courseName) {
+        String sql = "SELECT courseID FROM Course WHERE courseName = ?";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, courseName);
+            ResultSet rs = statement.executeQuery();
+            if (rs.next()) {
+                return rs.getString("courseID");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
     
     //thêm các trường thông tin vào bảng Enroll ()

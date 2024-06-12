@@ -1,11 +1,10 @@
 package model;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Date;
 
 public class Lecturer extends Person{
 	private String lecturerID;
+	//phương án List<Course> không khả thi -> bỏ
 //	private List<Course> courses;
  
 	public Lecturer(String name, boolean gender, Date dateOfBirth, String lecturerID) {

@@ -6,36 +6,26 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.Date;
-import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.sql.Date;
+
 
 import controller.DAO;
 import model.Student;
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.List;
-import java.util.Map;
-import java.sql.Date;
 
 public class StudentView extends JFrame {
     private JTextField nameField;
     private JTextField genderField;
     private JTextField dobField;
     private JTextField studentIDField;
+    private JTextField gpaField;
     private JTable studentTable;
     private DAO dao;
     private Map<String, Student> studentMap;
 
     public StudentView() {
         dao = new DAO();
-        studentMap = dao.getAllStudentsMap(); // Assuming you have this method to get students as a map
+        studentMap = dao.getAllStudentsMap(); 
         setTitle("Student Management");
         setSize(800, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -67,7 +57,7 @@ public class StudentView extends JFrame {
         formPanel.add(new JLabel("Student ID:"));
         studentIDField = new JTextField();
         formPanel.add(studentIDField);
-
+        
         JPanel buttonPanel = new JPanel();
         buttonPanel.setLayout(new GridLayout(0, 1, 10, 10));
         buttonPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
@@ -81,7 +71,7 @@ public class StudentView extends JFrame {
         });
         buttonPanel.add(addButton);
 
-        JButton updateButton = new JButton("Update");
+        JButton updateButton = new JButton("Update by ID");
         updateButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -90,7 +80,7 @@ public class StudentView extends JFrame {
         });
         buttonPanel.add(updateButton);
 
-        JButton deleteButton = new JButton("Delete");
+        JButton deleteButton = new JButton("Delete by ID");
         deleteButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -112,8 +102,8 @@ public class StudentView extends JFrame {
         backButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                dispose(); // Close the current StudentView window
-                new MainMenu().setVisible(true); // Show the MainMenu
+                dispose(); // đóng cửa sổ hiện tại
+                new MainMenu().setVisible(true); // hiển thị MainMenu
             }
         });
         buttonPanel.add(backButton);
@@ -169,14 +159,14 @@ public class StudentView extends JFrame {
         Date dob = Date.valueOf(dobField.getText());
         String studentID = studentIDField.getText();
 
-        Student student = new Student(name, gender, dob, studentID);
+        Student student = new Student(name, gender, dob, studentID, 0.0); //gpa mặc định là 0.0
         boolean success = dao.addStudent(student);
 
         if (success) {
             JOptionPane.showMessageDialog(this, "Student added successfully!");
-            displayStudents(); // Refresh student list after adding
+            displayStudents(); // hiển thị lại sau khi thêm
         } else {
-            JOptionPane.showMessageDialog(this, "Student ID bị trùng");
+            JOptionPane.showMessageDialog(this, "Failed to add student.");
         }
     }
 
@@ -186,10 +176,10 @@ public class StudentView extends JFrame {
         Date dob = Date.valueOf(dobField.getText());
         String studentID = studentIDField.getText();
 
-        Student student = new Student(name, gender, dob, studentID);
+        Student student = new Student(name, gender, dob, studentID, 0.0);
         dao.updateStudent(student);
         JOptionPane.showMessageDialog(this, "Student updated successfully!");
-        displayStudents(); // Refresh student list after updating
+        displayStudents(); // hiển thị lại sau khi thêm
     }
 
     private void deleteStudent() {
@@ -199,7 +189,7 @@ public class StudentView extends JFrame {
         if (student != null) {
             dao.deleteStudent(student.getStudentID());
             JOptionPane.showMessageDialog(this, "Student deleted successfully!");
-            displayStudents(); // Refresh student list after deleting
+            displayStudents(); // hiển thị lại sau khi xóa
         } else {
             JOptionPane.showMessageDialog(this, "Student not found");
         }
@@ -213,6 +203,7 @@ public class StudentView extends JFrame {
             genderField.setText(String.valueOf(student.getGender()));
             dobField.setText(student.getDOB().toString());
             studentIDField.setText(student.getStudentID());
+            gpaField.setText(String.valueOf(student.getGpa()));
             JOptionPane.showMessageDialog(this, "Student found!");
         } else {
             JOptionPane.showMessageDialog(this, "Student not found");
@@ -225,15 +216,16 @@ public class StudentView extends JFrame {
         model.addColumn("Gender");
         model.addColumn("Date of Birth");
         model.addColumn("Student ID");
-
-        List<Student> students = dao.getAllStudents(); // Sử dụng phương thức đã có trong DAO để lấy danh sách sinh viên
+        model.addColumn("GPA");
+        
+        List<Student> students = dao.getAllStudents(); 
 
         for (Student student : students) {
-            Object[] rowData = {student.getName(), student.getGender(), student.getDOB(), student.getStudentID()};
+            Object[] rowData = {student.getName(), student.getGender(), student.getDOB(), student.getStudentID(), student.getGpa()};
             model.addRow(rowData);
         }
-
-        studentTable.setModel(model); // Đặt mô hình dữ liệu cho JTable
+        // Đặt mô hình dữ liệu cho JTable
+        studentTable.setModel(model); 
     }
 
     public static void main(String[] args) {

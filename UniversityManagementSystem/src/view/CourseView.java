@@ -7,7 +7,6 @@ import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.Date;
 import javax.swing.table.DefaultTableModel;
 import java.util.Map;
 
@@ -60,7 +59,7 @@ public class CourseView extends JFrame {
         });
         buttonPanel.add(addButton);
 
-        JButton updateButton = new JButton("Update");
+        JButton updateButton = new JButton("Update by ID");
         updateButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -69,7 +68,7 @@ public class CourseView extends JFrame {
         });
         buttonPanel.add(updateButton);
 
-        JButton deleteButton = new JButton("Delete");
+        JButton deleteButton = new JButton("Delete by ID");
         deleteButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -91,8 +90,8 @@ public class CourseView extends JFrame {
         backButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                dispose(); // Close the current CourseView window
-                new MainMenu().setVisible(true); // Show the MainMenu
+                dispose(); // đóng cửa sổ hiện tại
+                new MainMenu().setVisible(true); // hiển thị MainMenu
             }
         });
         buttonPanel.add(backButton);

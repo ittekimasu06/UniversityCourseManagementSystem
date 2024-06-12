@@ -1,17 +1,17 @@
 package model;
 
-import java.util.ArrayList;
-import java.sql.*;
-import java.util.List;
 import java.util.Date;
 
 public class Student extends Person {
 	private String studentID;
+	private double gpa;
+	//phương án List<Course> không khả thi -> bỏ
 //    private List<Course> courses;
  
-    public Student(String name, boolean gender, Date dateOfBirth, String studentID) {
+    public Student(String name, boolean gender, Date dateOfBirth, String studentID, double gpa) {
         super(name, gender, dateOfBirth);
         this.studentID = studentID;
+        this.gpa = gpa;
 //        this.courses = new ArrayList<>();
     }
     
@@ -21,6 +21,14 @@ public class Student extends Person {
     
     public String getStudentID() {
     	return studentID;
+    }
+    
+    public void setGpa(double gpa) {
+    	this.gpa = gpa;
+    }
+    
+    public double getGpa() {
+        return gpa;
     }
 
 //    public void enrollCourse(Course course) {

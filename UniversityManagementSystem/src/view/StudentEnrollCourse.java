@@ -10,10 +10,11 @@ import java.util.List;
 
 import controller.DAO;
 import model.Enrollment;
+import model.Student;
 
 public class StudentEnrollCourse extends JFrame {
-    private JComboBox<String> studentIDComboBox;
-    private JComboBox<String> courseIDComboBox;
+    private JComboBox<String> studentNameComboBox;
+    private JComboBox<String> courseNameComboBox;
     private JTextField markField;
     private JTable enrollTable;
     private DAO dao;
@@ -36,15 +37,15 @@ public class StudentEnrollCourse extends JFrame {
         formPanel.setLayout(new GridLayout(0, 2, 10, 10));
         formPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        formPanel.add(new JLabel("Student ID:"));
-        studentIDComboBox = new JComboBox<>();
-        populateStudentIDComboBox();
-        formPanel.add(studentIDComboBox);
+        formPanel.add(new JLabel("Student Name:"));
+        studentNameComboBox = new JComboBox<>();
+        populateStudentNameComboBox();
+        formPanel.add(studentNameComboBox);
 
-        formPanel.add(new JLabel("Course ID:"));
-        courseIDComboBox = new JComboBox<>();
-        populateCourseIDComboBox();
-        formPanel.add(courseIDComboBox);
+        formPanel.add(new JLabel("Course Name:"));
+        courseNameComboBox = new JComboBox<>();
+        populateCourseNameComboBox();
+        formPanel.add(courseNameComboBox);
 
         formPanel.add(new JLabel("Mark:"));
         markField = new JTextField();
@@ -62,6 +63,16 @@ public class StudentEnrollCourse extends JFrame {
             }
         });
         buttonPanel.add(enrollButton);
+        
+        JButton backButton = new JButton("Back");
+        backButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                dispose(); //đóng cửa sổ hiện tại
+                new MainMenu().setVisible(true); //hiển thị MainMenu
+            }
+        });
+        buttonPanel.add(backButton);
 
         leftPanel.add(formPanel, BorderLayout.NORTH);
         leftPanel.add(buttonPanel, BorderLayout.SOUTH);
@@ -75,23 +86,27 @@ public class StudentEnrollCourse extends JFrame {
         displayEnrollments();
     }
 
-    private void populateStudentIDComboBox() {
-        List<String> studentIDs = dao.getAllStudentIDs();
-        for (String id : studentIDs) {
-            studentIDComboBox.addItem(id);
+    private void populateStudentNameComboBox() {
+        List<String> studentNames = dao.getAllStudentNames();
+        for (String name : studentNames) {
+        	studentNameComboBox.addItem(name);
         }
     }
 
-    private void populateCourseIDComboBox() {
-        List<String> courseIDs = dao.getAllCourseIDs();
-        for (String id : courseIDs) {
-            courseIDComboBox.addItem(id);
+    private void populateCourseNameComboBox() {
+        List<String> courseNames = dao.getAllCourseNames();
+        for (String name : courseNames) {
+            courseNameComboBox.addItem(name);
         }
     }
 
     private void enrollStudentInCourse() {
-        String studentID = (String) studentIDComboBox.getSelectedItem();
-        String courseID = (String) courseIDComboBox.getSelectedItem();
+        String studentName = (String) studentNameComboBox.getSelectedItem();
+        String courseName = (String) courseNameComboBox.getSelectedItem();
+        
+     // tìm ID của sinh viên và khóa học tương ứng với tên đã chọn
+        String studentID = dao.getStudentIDByName(studentName);
+        String courseID = dao.getCourseIDByName(courseName);
         double mark = Double.parseDouble(markField.getText());
 
         boolean success = dao.enrollStudentInCourseAndAssignMark(studentID, courseID, mark);
@@ -108,15 +123,34 @@ public class StudentEnrollCourse extends JFrame {
         markField.setText("");
     }
 
+//    private void displayEnrollments() {
+//        DefaultTableModel model = new DefaultTableModel();
+//        model.addColumn("Student ID");
+//        model.addColumn("Course ID");
+//        model.addColumn("Mark");
+//
+//        List<Enrollment> enrollments = dao.getAllEnrollments();
+//        for (Enrollment enrollment : enrollments) {
+//            Object[] rowData = {enrollment.getStudentID(), enrollment.getCourseID(), enrollment.getMark()};
+//            model.addRow(rowData);
+//        }
+//
+//        enrollTable.setModel(model);
+//    }
+    
     private void displayEnrollments() {
         DefaultTableModel model = new DefaultTableModel();
+        model.addColumn("Student Name");
         model.addColumn("Student ID");
+        model.addColumn("Course Name");
         model.addColumn("Course ID");
         model.addColumn("Mark");
 
         List<Enrollment> enrollments = dao.getAllEnrollments();
         for (Enrollment enrollment : enrollments) {
-            Object[] rowData = {enrollment.getStudentID(), enrollment.getCourseID(), enrollment.getMark()};
+        	String studentName = dao.getStudentNameByID(enrollment.getStudentID());
+            String courseName = dao.getCourseNameByID(enrollment.getCourseID());
+            Object[] rowData = {studentName, enrollment.getStudentID(), courseName, enrollment.getCourseID(), enrollment.getMark()};
             model.addRow(rowData);
         }
 

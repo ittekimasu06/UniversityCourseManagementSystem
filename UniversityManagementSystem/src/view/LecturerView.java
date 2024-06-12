@@ -26,7 +26,7 @@ public class LecturerView extends JFrame {
 
     public LecturerView() {
         dao = new DAO();
-        lecturerMap = dao.getAllLecturersMap(); // Assuming you have this method to get lecturers as a map
+        lecturerMap = dao.getAllLecturersMap(); 
         setTitle("Lecturer Management");
         setSize(800, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -72,7 +72,7 @@ public class LecturerView extends JFrame {
         });
         buttonPanel.add(addButton);
 
-        JButton updateButton = new JButton("Update");
+        JButton updateButton = new JButton("Update by ID");
         updateButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -81,7 +81,7 @@ public class LecturerView extends JFrame {
         });
         buttonPanel.add(updateButton);
 
-        JButton deleteButton = new JButton("Delete");
+        JButton deleteButton = new JButton("Delete by ID");
         deleteButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -103,8 +103,8 @@ public class LecturerView extends JFrame {
         backButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                dispose(); // Close the current LecturerView window
-                new MainMenu().setVisible(true); // Show the MainMenu
+                dispose(); // đóng cửa sổ hiện tại
+                new MainMenu().setVisible(true); // hiển thị MainMenu
             }
         });
         buttonPanel.add(backButton);
@@ -165,7 +165,7 @@ public class LecturerView extends JFrame {
 
         if (success) {
             JOptionPane.showMessageDialog(this, "Lecturer added successfully!");
-            displayLecturers(); // Refresh lecturer list after adding
+            displayLecturers(); // hiển thị lại sau khi thêm
         } else {
             JOptionPane.showMessageDialog(this, "Lecturer ID bị trùng");
         }
@@ -180,7 +180,7 @@ public class LecturerView extends JFrame {
         Lecturer lecturer = new Lecturer(name, gender, dob, lecturerID);
         dao.updateLecturer(lecturer);
         JOptionPane.showMessageDialog(this, "Lecturer updated successfully!");
-        displayLecturers(); // Refresh lecturer list after updating
+        displayLecturers(); // hiển thị lại sau khi update
     }
 
     private void deleteLecturer() {
@@ -190,7 +190,7 @@ public class LecturerView extends JFrame {
         if (lecturer != null) {
             dao.deleteLecturer(lecturer.getLecturerID());
             JOptionPane.showMessageDialog(this, "Lecturer deleted successfully!");
-            displayLecturers(); // Refresh lecturer list after deleting
+            displayLecturers(); // hiển thị lại sau khi xóa
         } else {
             JOptionPane.showMessageDialog(this, "Lecturer not found");
         }
@@ -217,14 +217,14 @@ public class LecturerView extends JFrame {
         model.addColumn("Date of Birth");
         model.addColumn("Lecturer ID");
 
-        List<Lecturer> lecturers = dao.getAllLecturers(); // Sử dụng phương thức đã có trong DAO để lấy danh sách giảng viên
+        List<Lecturer> lecturers = dao.getAllLecturers(); 
 
         for (Lecturer lecturer : lecturers) {
             Object[] rowData = {lecturer.getName(), lecturer.getGender(), lecturer.getDOB(), lecturer.getLecturerID()};
             model.addRow(rowData);
         }
 
-        lecturerTable.setModel(model); // Đặt mô hình dữ liệu cho JTable
+        lecturerTable.setModel(model); // đặt mô hình dữ liệu cho JTable
     }
 
     public static void main(String[] args) {

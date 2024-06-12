@@ -18,7 +18,7 @@ public class LecturerTeachCourse extends JFrame {
 
     public LecturerTeachCourse() {
         dao = new DAO();
-        setTitle("Lecturer Teach Course");
+        setTitle("Assign Lecture to Course");
         setSize(800, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
@@ -56,6 +56,17 @@ public class LecturerTeachCourse extends JFrame {
             }
         });
         buttonPanel.add(assignButton);
+        
+        JButton backButton = new JButton("Back");
+        backButton.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				dispose();
+				new MainMenu().setVisible(true);
+			}
+		});
+        buttonPanel.add(backButton);
 
         leftPanel.add(formPanel, BorderLayout.NORTH);
         leftPanel.add(buttonPanel, BorderLayout.SOUTH);
