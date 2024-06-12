@@ -8,27 +8,28 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
 
-import controller.DAO;
+import controller.StudentDAO;
+import controller.CourseDAO;
+import controller.EnrollmentDAO;
 import model.Enrollment;
 import model.Student;
 
-public class StudentEnrollCourse extends JFrame {
+public class StudentEnrollCourse extends JPanel {
     private JComboBox<String> studentNameComboBox;
     private JComboBox<String> courseNameComboBox;
     private JTextField markField;
     private JTable enrollTable;
-    private DAO dao;
+    private StudentDAO studentDAO;
+    private CourseDAO courseDAO;
+    private EnrollmentDAO enrollDAO;
 
     public StudentEnrollCourse() {
-        dao = new DAO();
-        setTitle("Enroll Student in Course");
-        setSize(800, 600);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLocationRelativeTo(null);
+        studentDAO = new StudentDAO();
+        courseDAO = new CourseDAO();
+        enrollDAO = new EnrollmentDAO();
 
-        JPanel mainPanel = new JPanel();
-        mainPanel.setLayout(new BorderLayout(10, 10));
-        mainPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        setLayout(new BorderLayout(10, 10));
+        setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
         JPanel leftPanel = new JPanel();
         leftPanel.setLayout(new BorderLayout(10, 10));
@@ -63,38 +64,36 @@ public class StudentEnrollCourse extends JFrame {
             }
         });
         buttonPanel.add(enrollButton);
-        
-        JButton backButton = new JButton("Back");
-        backButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                dispose(); //đóng cửa sổ hiện tại
-                new MainMenu().setVisible(true); //hiển thị MainMenu
-            }
-        });
-        buttonPanel.add(backButton);
+
+//        JButton backButton = new JButton("Back");
+//        backButton.addActionListener(new ActionListener() {
+//            @Override
+//            public void actionPerformed(ActionEvent e) {
+//                ((CardLayout) getParent().getLayout()).show(getParent(), "MainMenu");
+//            }
+//        });
+//        buttonPanel.add(backButton);
 
         leftPanel.add(formPanel, BorderLayout.NORTH);
         leftPanel.add(buttonPanel, BorderLayout.SOUTH);
 
-        mainPanel.add(leftPanel, BorderLayout.WEST);
+        add(leftPanel, BorderLayout.WEST);
 
         enrollTable = new JTable();
-        mainPanel.add(new JScrollPane(enrollTable), BorderLayout.CENTER);
+        add(new JScrollPane(enrollTable), BorderLayout.CENTER);
 
-        add(mainPanel);
         displayEnrollments();
     }
 
     private void populateStudentNameComboBox() {
-        List<String> studentNames = dao.getAllStudentNames();
+        List<String> studentNames = studentDAO.getAllStudentNames();
         for (String name : studentNames) {
-        	studentNameComboBox.addItem(name);
+            studentNameComboBox.addItem(name);
         }
     }
 
     private void populateCourseNameComboBox() {
-        List<String> courseNames = dao.getAllCourseNames();
+        List<String> courseNames = courseDAO.getAllCourseNames();
         for (String name : courseNames) {
             courseNameComboBox.addItem(name);
         }
@@ -104,12 +103,11 @@ public class StudentEnrollCourse extends JFrame {
         String studentName = (String) studentNameComboBox.getSelectedItem();
         String courseName = (String) courseNameComboBox.getSelectedItem();
         
-     // tìm ID của sinh viên và khóa học tương ứng với tên đã chọn
-        String studentID = dao.getStudentIDByName(studentName);
-        String courseID = dao.getCourseIDByName(courseName);
+        String studentID = studentDAO.getStudentIDByName(studentName);
+        String courseID = courseDAO.getCourseIDByName(courseName);
         double mark = Double.parseDouble(markField.getText());
 
-        boolean success = dao.enrollStudentInCourseAndAssignMark(studentID, courseID, mark);
+        boolean success = enrollDAO.enrollStudentInCourseAndAssignMark(studentID, courseID, mark);
         if (success) {
             JOptionPane.showMessageDialog(this, "Student enrolled in course successfully!");
             displayEnrollments();
@@ -123,21 +121,6 @@ public class StudentEnrollCourse extends JFrame {
         markField.setText("");
     }
 
-//    private void displayEnrollments() {
-//        DefaultTableModel model = new DefaultTableModel();
-//        model.addColumn("Student ID");
-//        model.addColumn("Course ID");
-//        model.addColumn("Mark");
-//
-//        List<Enrollment> enrollments = dao.getAllEnrollments();
-//        for (Enrollment enrollment : enrollments) {
-//            Object[] rowData = {enrollment.getStudentID(), enrollment.getCourseID(), enrollment.getMark()};
-//            model.addRow(rowData);
-//        }
-//
-//        enrollTable.setModel(model);
-//    }
-    
     private void displayEnrollments() {
         DefaultTableModel model = new DefaultTableModel();
         model.addColumn("Student Name");
@@ -146,10 +129,10 @@ public class StudentEnrollCourse extends JFrame {
         model.addColumn("Course ID");
         model.addColumn("Mark");
 
-        List<Enrollment> enrollments = dao.getAllEnrollments();
+        List<Enrollment> enrollments = enrollDAO.getAllEnrollments();
         for (Enrollment enrollment : enrollments) {
-        	String studentName = dao.getStudentNameByID(enrollment.getStudentID());
-            String courseName = dao.getCourseNameByID(enrollment.getCourseID());
+            String studentName = studentDAO.getStudentNameByID(enrollment.getStudentID());
+            String courseName = courseDAO.getCourseNameByID(enrollment.getCourseID());
             Object[] rowData = {studentName, enrollment.getStudentID(), courseName, enrollment.getCourseID(), enrollment.getMark()};
             model.addRow(rowData);
         }
@@ -161,7 +144,12 @@ public class StudentEnrollCourse extends JFrame {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                new StudentEnrollCourse().setVisible(true);
+                JFrame frame = new JFrame("Enroll Student in Course");
+                frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                frame.setSize(800, 600);
+                frame.setLocationRelativeTo(null);
+                frame.setContentPane(new StudentEnrollCourse());
+                frame.setVisible(true);
             }
         });
     }

@@ -1,7 +1,9 @@
 package view;
 
 import javax.swing.*;
+
 import java.util.List;
+import java.awt.*;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
@@ -11,25 +13,23 @@ import javax.swing.table.DefaultTableModel;
 import java.util.Map;
 
 
-import controller.DAO;
+import controller.CourseDAO;
 import model.Course;
+import model.Lecturer;
 
-public class CourseView extends JFrame {
+public class CourseView extends JPanel {
     private JTextField courseNameField;
-    private JTextField courseIdField;
+    private JTextField courseIDField;
     private JTable courseTable;
-    private DAO dao;
+    private CourseDAO courseDAO;
+    private Map<String, Course> courseMap;
 
     public CourseView() {
-        dao = new DAO();
-        setTitle("Course Management");
-        setSize(800, 600);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLocationRelativeTo(null);
-
-        JPanel mainPanel = new JPanel();
-        mainPanel.setLayout(new BorderLayout(10, 10));
-        mainPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        courseDAO = new CourseDAO();
+        courseMap = courseDAO.getAllCoursesMap();
+        
+        setLayout(new BorderLayout(10, 10));
+        setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
         JPanel leftPanel = new JPanel();
         leftPanel.setLayout(new BorderLayout(10, 10));
@@ -43,8 +43,8 @@ public class CourseView extends JFrame {
         formPanel.add(courseNameField);
 
         formPanel.add(new JLabel("Course ID:"));
-        courseIdField = new JTextField();
-        formPanel.add(courseIdField);
+        courseIDField = new JTextField();
+        formPanel.add(courseIDField);
 
         JPanel buttonPanel = new JPanel();
         buttonPanel.setLayout(new GridLayout(0, 1, 10, 10));
@@ -86,30 +86,28 @@ public class CourseView extends JFrame {
         });
         buttonPanel.add(searchButton);
 
-        JButton backButton = new JButton("Back");
-        backButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                dispose(); // đóng cửa sổ hiện tại
-                new MainMenu().setVisible(true); // hiển thị MainMenu
-            }
-        });
-        buttonPanel.add(backButton);
+//        JButton backButton = new JButton("Back");
+//        backButton.addActionListener(new ActionListener() {
+//            @Override
+//            public void actionPerformed(ActionEvent e) {
+//                ((CardLayout) getParent().getLayout()).show(getParent(), "MainMenu");
+//            }
+//        });
+//        buttonPanel.add(backButton);
 
         leftPanel.add(formPanel, BorderLayout.NORTH);
         leftPanel.add(buttonPanel, BorderLayout.SOUTH);
 
-        mainPanel.add(leftPanel, BorderLayout.WEST);
+        add(leftPanel, BorderLayout.WEST);
 
         courseTable = new JTable();
-        mainPanel.add(new JScrollPane(courseTable), BorderLayout.CENTER);
+        add(new JScrollPane(courseTable), BorderLayout.CENTER);
 
-        add(mainPanel);
         displayCourses();
     }
 
     private void openSearchByNameDialog() {
-        JDialog searchDialog = new JDialog(this, "Search by Name", true);
+        JDialog searchDialog = new JDialog((Frame) SwingUtilities.getWindowAncestor(this), "Search by Name", true);
         searchDialog.setLayout(new BorderLayout());
         searchDialog.setSize(300, 150);
         searchDialog.setLocationRelativeTo(this);
@@ -143,12 +141,13 @@ public class CourseView extends JFrame {
 
     private void addCourse() {
         String name = courseNameField.getText();
-        String id = courseIdField.getText();
+        String id = courseIDField.getText();
         Course course = new Course(name, id);
-        boolean success = dao.addCourse(course);
+        boolean success = courseDAO.addCourse(course);
         if (success) {
             JOptionPane.showMessageDialog(this, "Course added successfully!");
-            displayCourses();
+            courseMap = courseDAO.getAllCoursesMap(); // cập nhật courseMap sau khi thêm
+            displayCourses(); // hiển thị lại sau khi thêm
         } else {
             JOptionPane.showMessageDialog(this, "Failed to add course.");
         }
@@ -156,29 +155,31 @@ public class CourseView extends JFrame {
 
     private void updateCourse() {
         String name = courseNameField.getText();
-        String id = courseIdField.getText();
+        String id = courseIDField.getText();
         Course course = new Course(name, id);
-        dao.updateCourse(course);
+        courseDAO.updateCourse(course);
         JOptionPane.showMessageDialog(this, "Course updated successfully!");
-        displayCourses();
+        courseMap = courseDAO.getAllCoursesMap(); // cập nhật courseMap sau khi cập nhật thông tin
+        displayCourses(); // hiển thị lại sau khi cập nhật
     }
 
     private void deleteCourse() {
-        String id = courseIdField.getText();
-        dao.deleteCourse(id);
+        String id = courseIDField.getText();
+        courseDAO.deleteCourse(id);
         JOptionPane.showMessageDialog(this, "Course deleted successfully!");
-        displayCourses();
+        courseMap = courseDAO.getAllCoursesMap(); // cập nhật courseMap sau khi xóa
+        displayCourses(); // hiển thị lại sau khi xóa
     }
 
     private void searchCourseByName(String name) {
-        Map<String, Course> courseMap = dao.getAllCoursesMap(name);
-        if (courseMap != null && !courseMap.isEmpty()) {
-            Course course = courseMap.values().iterator().next();
+        Course course = courseMap.get(name);
+
+        if (course != null) {
             courseNameField.setText(course.getCourseName());
-            courseIdField.setText(course.getCourseID());
+            courseIDField.setText(course.getCourseID());
             JOptionPane.showMessageDialog(this, "Course found!");
         } else {
-            JOptionPane.showMessageDialog(this, "Course not found");
+            JOptionPane.showMessageDialog(this, "Course not found.");
         }
     }
 
@@ -187,21 +188,27 @@ public class CourseView extends JFrame {
         model.addColumn("Course Name");
         model.addColumn("Course ID");
 
-        List<Course> courses = dao.getAllCourses();
-
+        List<Course> courses = courseDAO.getAllCourses();
+        courseMap.clear(); // clear map trước khi tổ chức lại
         for (Course course : courses) {
+            courseMap.put(course.getCourseName(), course);
             Object[] rowData = {course.getCourseName(), course.getCourseID()};
             model.addRow(rowData);
         }
 
-        courseTable.setModel(model);
+        courseTable.setModel(model); // đặt mô hình dữ liệu cho JTable
     }
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                new CourseView().setVisible(true);
+                JFrame frame = new JFrame("Course Management");
+                frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                frame.setSize(800, 600);
+                frame.setLocationRelativeTo(null);
+                frame.setContentPane(new CourseView());
+                frame.setVisible(true);
             }
         });
     }

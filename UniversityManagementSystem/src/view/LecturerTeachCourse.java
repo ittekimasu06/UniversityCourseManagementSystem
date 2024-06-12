@@ -7,25 +7,26 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
 
-import controller.DAO;
+import controller.LecturerDAO;
+import controller.CourseDAO;
+import controller.TeachDAO;
 import model.Teach;
 
-public class LecturerTeachCourse extends JFrame {
+public class LecturerTeachCourse extends JPanel {
     private JComboBox<String> lecturerIDComboBox;
     private JComboBox<String> courseIDComboBox;
     private JTable teachTable;
-    private DAO dao;
+    private LecturerDAO lecturerDAO;
+    private CourseDAO courseDAO;
+    private TeachDAO teachDAO;
 
     public LecturerTeachCourse() {
-        dao = new DAO();
-        setTitle("Assign Lecture to Course");
-        setSize(800, 600);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLocationRelativeTo(null);
+        lecturerDAO = new LecturerDAO();
+        courseDAO = new CourseDAO();
+        teachDAO = new TeachDAO();
 
-        JPanel mainPanel = new JPanel();
-        mainPanel.setLayout(new BorderLayout(10, 10));
-        mainPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        setLayout(new BorderLayout(10, 10));
+        setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
         JPanel leftPanel = new JPanel();
         leftPanel.setLayout(new BorderLayout(10, 10));
@@ -56,39 +57,36 @@ public class LecturerTeachCourse extends JFrame {
             }
         });
         buttonPanel.add(assignButton);
-        
-        JButton backButton = new JButton("Back");
-        backButton.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				dispose();
-				new MainMenu().setVisible(true);
-			}
-		});
-        buttonPanel.add(backButton);
+
+//        JButton backButton = new JButton("Back");
+//        backButton.addActionListener(new ActionListener() {
+//            @Override
+//            public void actionPerformed(ActionEvent e) {
+//                ((CardLayout) getParent().getLayout()).show(getParent(), "MainMenu");
+//            }
+//        });
+//        buttonPanel.add(backButton);
 
         leftPanel.add(formPanel, BorderLayout.NORTH);
         leftPanel.add(buttonPanel, BorderLayout.SOUTH);
 
-        mainPanel.add(leftPanel, BorderLayout.WEST);
+        add(leftPanel, BorderLayout.WEST);
 
         teachTable = new JTable();
-        mainPanel.add(new JScrollPane(teachTable), BorderLayout.CENTER);
+        add(new JScrollPane(teachTable), BorderLayout.CENTER);
 
-        add(mainPanel);
         displayTeaches();
     }
 
     private void populateLecturerIDComboBox() {
-        List<String> lecturerIDs = dao.getAllLecturerIDs();
+        List<String> lecturerIDs = lecturerDAO.getAllLecturerIDs();
         for (String id : lecturerIDs) {
             lecturerIDComboBox.addItem(id);
         }
     }
 
     private void populateCourseIDComboBox() {
-        List<String> courseIDs = dao.getAllCourseIDs();
+        List<String> courseIDs = courseDAO.getAllCourseIDs();
         for (String id : courseIDs) {
             courseIDComboBox.addItem(id);
         }
@@ -98,7 +96,7 @@ public class LecturerTeachCourse extends JFrame {
         String lecturerID = (String) lecturerIDComboBox.getSelectedItem();
         String courseID = (String) courseIDComboBox.getSelectedItem();
 
-        boolean success = dao.addTeach(lecturerID, courseID);
+        boolean success = teachDAO.addTeach(lecturerID, courseID);
         if (success) {
             JOptionPane.showMessageDialog(this, "Lecturer assigned to course successfully!");
             displayTeaches();
@@ -112,7 +110,7 @@ public class LecturerTeachCourse extends JFrame {
         model.addColumn("Lecturer ID");
         model.addColumn("Course ID");
 
-        List<Teach> teaches = dao.getAllTeach();
+        List<Teach> teaches = teachDAO.getAllTeach();
         for (Teach teach : teaches) {
             Object[] rowData = {teach.getLectureID(), teach.getCourseID()};
             model.addRow(rowData);
@@ -125,7 +123,12 @@ public class LecturerTeachCourse extends JFrame {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                new LecturerTeachCourse().setVisible(true);
+                JFrame frame = new JFrame("Assign Lecturer to Course");
+                frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                frame.setSize(800, 600);
+                frame.setLocationRelativeTo(null);
+                frame.setContentPane(new LecturerTeachCourse());
+                frame.setVisible(true);
             }
         });
     }

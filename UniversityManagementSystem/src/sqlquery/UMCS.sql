@@ -8,7 +8,7 @@ CREATE TABLE Student (
     gender BOOLEAN NOT NULL,
     dateOfBirth DATE NOT NULL,
 -- năm sinh không được trước 1930 và sau 2007 (việc học là việc cả đời :v)
-    CHECK (YEAR(dateOfBirth) > 1930 AND YEAR(dateOfBirth) < 2007),
+    CHECK (YEAR(dateOfBirth) > 1930 AND YEAR(dateOfBirth) < 2006),
 -- mã sinh viên phải có định dạng 'SVxxx' ('SV' và 4 chữ số)
     CHECK (studentID REGEXP '^SV[0-9]{4}$')
 );
