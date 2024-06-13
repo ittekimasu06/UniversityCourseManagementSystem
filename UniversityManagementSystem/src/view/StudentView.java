@@ -101,6 +101,7 @@ public class StudentView extends JPanel {
 //            }
 //        });
 //        buttonPanel.add(backButton);
+        
         JButton refreshButton = new JButton("Refresh");
         refreshButton.addActionListener(new ActionListener() {
             @Override
@@ -237,6 +238,7 @@ public class StudentView extends JPanel {
         displayStudents(); //hiển thị lại bảng
     }
 
+    
     public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
             @Override

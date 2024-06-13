@@ -103,6 +103,16 @@ public class LecturerView extends JPanel {
 //            }
 //        });
 //        buttonPanel.add(backButton);
+        
+
+        JButton refreshButton = new JButton("Refresh");
+        refreshButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                refreshLecturerTable();
+            }
+        });
+        buttonPanel.add(refreshButton);
 
         leftPanel.add(formPanel, BorderLayout.NORTH);
         leftPanel.add(buttonPanel, BorderLayout.SOUTH);
@@ -222,6 +232,11 @@ public class LecturerView extends JPanel {
         }
 
         lecturerTable.setModel(model); // đặt mô hình dữ liệu cho JTable
+    }
+    
+    private void refreshLecturerTable() {
+        lecturerMap = lecturerDAO.getAllLecturersMap(); // cập nhật lại lecturerMap
+        displayLecturers(); //hiển thị lại bảng
     }
 
     public static void main(String[] args) {

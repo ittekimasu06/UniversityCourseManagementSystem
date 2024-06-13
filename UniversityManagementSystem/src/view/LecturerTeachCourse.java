@@ -14,8 +14,8 @@ import model.Teach;
 
 public class LecturerTeachCourse extends JPanel {
 	private static final long serialVersionUID = -5094750251777697767L;
-	private JComboBox<String> lecturerIDComboBox;
-    private JComboBox<String> courseIDComboBox;
+	private JComboBox<String> lecturerNameComboBox;
+    private JComboBox<String> courseNameComboBox;
     private JTable teachTable;
     private LecturerDAO lecturerDAO;
     private CourseDAO courseDAO;
@@ -37,14 +37,14 @@ public class LecturerTeachCourse extends JPanel {
         formPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
         formPanel.add(new JLabel("Lecturer ID:"));
-        lecturerIDComboBox = new JComboBox<>();
-        populateLecturerIDComboBox();
-        formPanel.add(lecturerIDComboBox);
+        lecturerNameComboBox = new JComboBox<>();
+        populateLecturerNameComboBox();
+        formPanel.add(lecturerNameComboBox);
 
         formPanel.add(new JLabel("Course ID:"));
-        courseIDComboBox = new JComboBox<>();
-        populateCourseIDComboBox();
-        formPanel.add(courseIDComboBox);
+        courseNameComboBox = new JComboBox<>();
+        populateCourseNameComboBox();
+        formPanel.add(courseNameComboBox);
 
         JPanel buttonPanel = new JPanel();
         buttonPanel.setLayout(new GridLayout(0, 1, 10, 10));
@@ -67,6 +67,15 @@ public class LecturerTeachCourse extends JPanel {
 //            }
 //        });
 //        buttonPanel.add(backButton);
+        
+        JButton refreshButton = new JButton("Refresh");
+        refreshButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                refreshTeachesTable();
+            }
+        });
+        buttonPanel.add(refreshButton);
 
         leftPanel.add(formPanel, BorderLayout.NORTH);
         leftPanel.add(buttonPanel, BorderLayout.SOUTH);
@@ -79,24 +88,27 @@ public class LecturerTeachCourse extends JPanel {
         displayTeaches();
     }
 
-    private void populateLecturerIDComboBox() {
-        List<String> lecturerIDs = lecturerDAO.getAllLecturerIDs();
-        for (String id : lecturerIDs) {
-            lecturerIDComboBox.addItem(id);
+    private void populateLecturerNameComboBox() {
+        List<String> lecturerNames = lecturerDAO.getAllLecturerNames();
+        for (String name : lecturerNames) {
+            lecturerNameComboBox.addItem(name);
         }
     }
 
-    private void populateCourseIDComboBox() {
-        List<String> courseIDs = courseDAO.getAllCourseIDs();
-        for (String id : courseIDs) {
-            courseIDComboBox.addItem(id);
+    private void populateCourseNameComboBox() {
+        List<String> courseNames = courseDAO.getAllCourseNames();
+        for (String name : courseNames) {
+            courseNameComboBox.addItem(name);
         }
     }
 
     private void assignLecturerToCourse() {
-        String lecturerID = (String) lecturerIDComboBox.getSelectedItem();
-        String courseID = (String) courseIDComboBox.getSelectedItem();
+        String lecturerName = (String) lecturerNameComboBox.getSelectedItem();
+        String courseName = (String) courseNameComboBox.getSelectedItem();
 
+        String lecturerID = lecturerDAO.getLecturerIDByName(lecturerName);
+        String courseID = courseDAO.getCourseIDByName(courseName);
+        
         boolean success = teachDAO.addTeach(lecturerID, courseID);
         if (success) {
             JOptionPane.showMessageDialog(this, "Lecturer assigned to course successfully!");
@@ -108,16 +120,24 @@ public class LecturerTeachCourse extends JPanel {
 
     private void displayTeaches() {
         DefaultTableModel model = new DefaultTableModel();
+        model.addColumn("Lecturer Name");
         model.addColumn("Lecturer ID");
+        model.addColumn("Course Name");
         model.addColumn("Course ID");
 
         List<Teach> teaches = teachDAO.getAllTeach();
         for (Teach teach : teaches) {
-            Object[] rowData = {teach.getLectureID(), teach.getCourseID()};
+        	String lecturerName = lecturerDAO.getLecturerNameByID(teach.getLectureID());
+        	String courseName = courseDAO.getCourseNameByID(teach.getCourseID());
+            Object[] rowData = {lecturerName, teach.getLectureID(), courseName, teach.getCourseID()};
             model.addRow(rowData);
         }
 
         teachTable.setModel(model);
+    }
+    
+    private void refreshTeachesTable() {
+    	displayTeaches();
     }
 
     public static void main(String[] args) {

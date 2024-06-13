@@ -95,6 +95,15 @@ public class CourseView extends JPanel {
 //            }
 //        });
 //        buttonPanel.add(backButton);
+        
+        JButton refreshButton = new JButton("Refresh");
+        refreshButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                refreshCourseTable();
+            }
+        });
+        buttonPanel.add(refreshButton);
 
         leftPanel.add(formPanel, BorderLayout.NORTH);
         leftPanel.add(buttonPanel, BorderLayout.SOUTH);
@@ -200,6 +209,11 @@ public class CourseView extends JPanel {
         courseTable.setModel(model); // đặt mô hình dữ liệu cho JTable
     }
 
+    private void refreshCourseTable() {
+        courseMap = courseDAO.getAllCoursesMap(); // cập nhật lại courseMap
+        displayCourses(); //hiển thị lại bảng
+    }
+    
     public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
             @Override

@@ -129,4 +129,49 @@ public class LecturerDAO {
         }
         return lecturerIDs;
     }
+    
+    //lấy tên từ Lecturer
+    public List<String> getAllLecturerNames() {
+        List<String> lecturerNames = new ArrayList<>();
+        String sql = "SELECT name FROM Lecturer";
+        try (PreparedStatement statement = connection.prepareStatement(sql); 
+        	ResultSet rs = statement.executeQuery()) {
+            while (rs.next()) {
+                lecturerNames.add(rs.getString("name"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return lecturerNames;
+    }
+    
+    //lấy lecturerID từ tên
+    public String getLecturerIDByName(String name) {
+        String sql = "SELECT lecturerID FROM Lecturer WHERE name = ?";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, name);
+            ResultSet rs = statement.executeQuery();
+            if (rs.next()) {
+                return rs.getString("lecturerID");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+    
+    //lấy tên từ lecturerID
+    public String getLecturerNameByID(String lecturerID) {
+        String sql = "SELECT name FROM Lecturer WHERE lecturerID = ?";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, lecturerID);
+            ResultSet rs = statement.executeQuery();
+            if (rs.next()) {
+                return rs.getString("name");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }

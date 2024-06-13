@@ -73,6 +73,15 @@ public class StudentEnrollCourse extends JPanel {
 //            }
 //        });
 //        buttonPanel.add(backButton);
+        
+        JButton refreshButton = new JButton("Refresh");
+        refreshButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                refreshEnrollTable();
+            }
+        });
+        buttonPanel.add(refreshButton);
 
         leftPanel.add(formPanel, BorderLayout.NORTH);
         leftPanel.add(buttonPanel, BorderLayout.SOUTH);
@@ -139,6 +148,11 @@ public class StudentEnrollCourse extends JPanel {
 
         enrollTable.setModel(model);
     }
+    
+    private void refreshEnrollTable() {
+        displayEnrollments();
+    }
+
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
