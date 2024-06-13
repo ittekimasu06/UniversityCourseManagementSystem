@@ -14,7 +14,8 @@ import controller.StudentDAO;
 import model.Student;
 
 public class StudentView extends JPanel {
-    private JTextField nameField;
+	private static final long serialVersionUID = 8208676661723132731L;
+	private JTextField nameField;
     private JTextField genderField;
     private JTextField dobField;
     private JTextField studentIDField;
@@ -100,6 +101,14 @@ public class StudentView extends JPanel {
 //            }
 //        });
 //        buttonPanel.add(backButton);
+        JButton refreshButton = new JButton("Refresh");
+        refreshButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                refreshStudentTable();
+            }
+        });
+        buttonPanel.add(refreshButton);
 
         leftPanel.add(formPanel, BorderLayout.NORTH);
         leftPanel.add(buttonPanel, BorderLayout.SOUTH);
@@ -221,6 +230,11 @@ public class StudentView extends JPanel {
         }
         // Đặt mô hình dữ liệu cho JTable
         studentTable.setModel(model);
+    }
+    
+    private void refreshStudentTable() {
+        studentMap = studentDAO.getAllStudentsMap(); // cập nhật lại studentMap
+        displayStudents(); //hiển thị lại bảng
     }
 
     public static void main(String[] args) {

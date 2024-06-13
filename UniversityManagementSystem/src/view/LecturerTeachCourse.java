@@ -13,7 +13,8 @@ import controller.TeachDAO;
 import model.Teach;
 
 public class LecturerTeachCourse extends JPanel {
-    private JComboBox<String> lecturerIDComboBox;
+	private static final long serialVersionUID = -5094750251777697767L;
+	private JComboBox<String> lecturerIDComboBox;
     private JComboBox<String> courseIDComboBox;
     private JTable teachTable;
     private LecturerDAO lecturerDAO;

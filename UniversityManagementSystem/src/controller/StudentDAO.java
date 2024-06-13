@@ -60,12 +60,10 @@ public class StudentDAO {
             statement.setString(1, studentID);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
-                int id = resultSet.getInt("id");
-                 String name = resultSet.getString("name");
+                String name = resultSet.getString("name");
                 boolean gender = resultSet.getBoolean("gender");
                 Date dateOfBirth = resultSet.getDate("dateOfBirth");
                 double gpa = calculateGPA(studentID);
-                
                 return new Student(name, gender, dateOfBirth, studentID, gpa);
             }
         } catch(SQLException e) {

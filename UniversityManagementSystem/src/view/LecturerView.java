@@ -3,7 +3,6 @@ package view;
 import javax.swing.*;
 import java.util.List;
 import java.awt.BorderLayout;
-import java.awt.CardLayout;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -13,12 +12,12 @@ import java.awt.*;
 import javax.swing.table.DefaultTableModel;
 import java.util.Map;
 
-
 import controller.LecturerDAO;
 import model.Lecturer;
 
 public class LecturerView extends JPanel {
-    private JTextField nameField;
+	private static final long serialVersionUID = -7543262858433732687L;
+	private JTextField nameField;
     private JTextField genderField;
     private JTextField dobField;
     private JTextField lecturerIDField;

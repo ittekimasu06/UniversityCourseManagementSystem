@@ -15,10 +15,11 @@ import java.util.Map;
 
 import controller.CourseDAO;
 import model.Course;
-import model.Lecturer;
+
 
 public class CourseView extends JPanel {
-    private JTextField courseNameField;
+	private static final long serialVersionUID = 3062527725311502509L;
+	private JTextField courseNameField;
     private JTextField courseIDField;
     private JTable courseTable;
     private CourseDAO courseDAO;

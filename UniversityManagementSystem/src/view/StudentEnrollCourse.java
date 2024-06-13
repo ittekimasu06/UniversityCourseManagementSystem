@@ -12,10 +12,10 @@ import controller.StudentDAO;
 import controller.CourseDAO;
 import controller.EnrollmentDAO;
 import model.Enrollment;
-import model.Student;
 
 public class StudentEnrollCourse extends JPanel {
-    private JComboBox<String> studentNameComboBox;
+	private static final long serialVersionUID = 2307855448444060619L;
+	private JComboBox<String> studentNameComboBox;
     private JComboBox<String> courseNameComboBox;
     private JTextField markField;
     private JTable enrollTable;
