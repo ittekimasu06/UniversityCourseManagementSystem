@@ -35,4 +35,6 @@ public abstract class Person {
     public Date getDOB() {
     	return dateOfBirth;
     }
+    
+    public abstract void view();
 }

@@ -236,7 +236,7 @@ public class StudentView extends JPanel {
         studentMap.clear(); //clear map trước khi tổ chức lại
         for (Student student : students) {
             studentMap.put(student.getName(), student);
-            Object[] rowData = {student.getName(), student.getGender(), student.getDOB(), student.getStudentID(), student.getGpa()};
+            Object[] rowData = {student.getName(), (student.getGender() ? "Male" : "Female"), student.getDOB(), student.getStudentID(), student.getGpa()};
             model.addRow(rowData);
         }
         // Đặt mô hình dữ liệu cho JTable

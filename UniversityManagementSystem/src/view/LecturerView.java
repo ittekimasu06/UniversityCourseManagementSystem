@@ -235,7 +235,7 @@ public class LecturerView extends JPanel {
         List<Lecturer> lecturers = lecturerDAO.getAllLecturers();
 
         for (Lecturer lecturer : lecturers) {
-            Object[] rowData = {lecturer.getName(), lecturer.getGender(), lecturer.getDOB(), lecturer.getLecturerID()};
+            Object[] rowData = {lecturer.getName(), (lecturer.getGender() ? "Male" : "Female"), lecturer.getDOB(), lecturer.getLecturerID()};
             model.addRow(rowData);
         }
 

@@ -5,7 +5,7 @@ import java.util.Date;
 public class Student extends Person {
 	private String studentID;
 	private double gpa;
-	//phương án List<Course> không khả thi -> bỏ
+	//phương án lưuList<Course> trong lớp Student không khả thi -> bỏ
 //    private List<Course> courses;
  
     public Student(String name, boolean gender, Date dateOfBirth, String studentID, double gpa) {
@@ -29,6 +29,16 @@ public class Student extends Person {
     
     public double getGpa() {
         return gpa;
+    }
+    
+    @Override
+    public void view() {
+        System.out.println("Student Information:");
+        System.out.println("Name: " + getName());
+        System.out.println("Gender: " + (getGender() ? "Male" : "Female"));
+        System.out.println("Date of Birth: " + getDOB());
+        System.out.println("Student ID: " + getStudentID());
+        System.out.println("GPA: " + getGpa());
     }
 
 //    public void enrollCourse(Course course) {
