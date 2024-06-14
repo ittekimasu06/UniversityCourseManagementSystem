@@ -64,15 +64,6 @@ public class StudentEnrollCourse extends JPanel {
             }
         });
         buttonPanel.add(enrollButton);
-
-//        JButton backButton = new JButton("Back");
-//        backButton.addActionListener(new ActionListener() {
-//            @Override
-//            public void actionPerformed(ActionEvent e) {
-//                ((CardLayout) getParent().getLayout()).show(getParent(), "MainMenu");
-//            }
-//        });
-//        buttonPanel.add(backButton);
         
         JButton refreshButton = new JButton("Refresh");
         refreshButton.addActionListener(new ActionListener() {

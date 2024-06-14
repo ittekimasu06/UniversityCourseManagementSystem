@@ -6,6 +6,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
 
 import model.Student;
 
@@ -195,6 +198,15 @@ public class StudentDAO {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return count > 0 ? gpa / count : 0.0;
+        
+        if(count > 0) {
+        	gpa = gpa / count;
+        	// dùng bigdecimal để làm tròn gpa đến chữ số 3 sau dấu thập phân
+        	BigDecimal bd = new BigDecimal(Double.toString(gpa));
+        	bd = bd.setScale(3, RoundingMode.HALF_UP); //làm tròn lên (ví dụ: 3.4326 = 3.433)
+        	return bd.doubleValue();
+        } else {
+        	return 0.0;
+        }
     }
 }

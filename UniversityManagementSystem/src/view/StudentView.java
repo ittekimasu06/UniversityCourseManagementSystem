@@ -102,6 +102,15 @@ public class StudentView extends JPanel {
 //        });
 //        buttonPanel.add(backButton);
         
+        JButton studentInfoButton = new JButton("Student Info");
+        studentInfoButton.addActionListener(new ActionListener() {
+        	@Override
+        	public void actionPerformed(ActionEvent e) {
+        		openStudentInfoWindow();
+        	}
+        });
+        buttonPanel.add(studentInfoButton);
+        
         JButton refreshButton = new JButton("Refresh");
         refreshButton.addActionListener(new ActionListener() {
             @Override
@@ -110,6 +119,7 @@ public class StudentView extends JPanel {
             }
         });
         buttonPanel.add(refreshButton);
+        
 
         leftPanel.add(formPanel, BorderLayout.NORTH);
         leftPanel.add(buttonPanel, BorderLayout.SOUTH);
@@ -238,6 +248,10 @@ public class StudentView extends JPanel {
         displayStudents(); //hiển thị lại bảng
     }
 
+    private void openStudentInfoWindow() {
+        StudentInfoView studentInfoView = new StudentInfoView();
+        studentInfoView.setVisible(true);
+    }
     
     public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {

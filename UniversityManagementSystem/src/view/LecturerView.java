@@ -104,6 +104,14 @@ public class LecturerView extends JPanel {
 //        });
 //        buttonPanel.add(backButton);
         
+        JButton lecturerInfoButton = new JButton("Lecturer Info");
+        lecturerInfoButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                openLecturerInfoWindow();
+            }
+        });
+        buttonPanel.add(lecturerInfoButton);
 
         JButton refreshButton = new JButton("Refresh");
         refreshButton.addActionListener(new ActionListener() {
@@ -237,6 +245,11 @@ public class LecturerView extends JPanel {
     private void refreshLecturerTable() {
         lecturerMap = lecturerDAO.getAllLecturersMap(); // cập nhật lại lecturerMap
         displayLecturers(); //hiển thị lại bảng
+    }
+    
+    private void openLecturerInfoWindow() {
+        LecturerInfoView lecturerInfoView = new LecturerInfoView();
+        lecturerInfoView.setVisible(true);
     }
 
     public static void main(String[] args) {

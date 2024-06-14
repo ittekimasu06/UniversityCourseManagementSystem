@@ -127,9 +127,9 @@ public class LecturerTeachCourse extends JPanel {
 
         List<Teach> teaches = teachDAO.getAllTeach();
         for (Teach teach : teaches) {
-        	String lecturerName = lecturerDAO.getLecturerNameByID(teach.getLectureID());
+        	String lecturerName = lecturerDAO.getLecturerNameByID(teach.getLecturerID());
         	String courseName = courseDAO.getCourseNameByID(teach.getCourseID());
-            Object[] rowData = {lecturerName, teach.getLectureID(), courseName, teach.getCourseID()};
+            Object[] rowData = {lecturerName, teach.getLecturerID(), courseName, teach.getCourseID()};
             model.addRow(rowData);
         }
 

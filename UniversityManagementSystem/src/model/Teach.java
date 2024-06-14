@@ -9,11 +9,11 @@ public class Teach {
 		this.courseID = courseID;
 	}
 	
-	public void setLectureID(String lectureID) {
+	public void setLecturerID(String lectureID) {
     	this.lectureID = lectureID;
     }
 	
-	public String getLectureID() {
+	public String getLecturerID() {
 		return lectureID;
 	}
 	
