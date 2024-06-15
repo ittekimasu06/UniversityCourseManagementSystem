@@ -30,6 +30,22 @@ public class EnrollmentDAO {
         }
     }
     
+ // kiểm tra nếu một course đã đầy
+    public boolean isCourseFull(String courseID) {
+        String sql = "SELECT COUNT(*) FROM Enroll WHERE courseID = ?";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, courseID);
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                int count = resultSet.getInt(1);
+                return count >= 100;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+    
     //trả về list các enrollment 
     public List<Enrollment> getAllEnrollments() {
         List<Enrollment> enrollments = new ArrayList<>();
@@ -48,5 +64,4 @@ public class EnrollmentDAO {
         return enrollments;
     }
     
-
 }

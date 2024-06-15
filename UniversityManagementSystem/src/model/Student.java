@@ -32,13 +32,15 @@ public class Student extends Person {
     }
     
     @Override
-    public void view() {
-        System.out.println("Student Information:");
-        System.out.println("Name: " + getName());
-        System.out.println("Gender: " + (getGender() ? "Male" : "Female"));
-        System.out.println("Date of Birth: " + getDOB());
-        System.out.println("Student ID: " + getStudentID());
-        System.out.println("GPA: " + getGpa());
+    public String view() {
+        StringBuilder sb = new StringBuilder(); //StringBuilder dùng để xây dựng chuỗi
+        sb.append("Student Information:\n"); //append dùng để nối các chuỗi vào đối tượng StringBuilder
+        sb.append("Name: ").append(getName()).append("\n");
+        sb.append("Gender: ").append(getGender() ? "Male" : "Female").append("\n");
+        sb.append("Date of Birth: ").append(getDOB()).append("\n");
+        sb.append("Student ID: ").append(getStudentID()).append("\n");
+        sb.append("GPA: ").append(String.format("%.3f", getGpa())).append("\n"); // giới hạn GPA đến 3 chữ số thập phân
+        return sb.toString();
     }
 
 //    public void enrollCourse(Course course) {

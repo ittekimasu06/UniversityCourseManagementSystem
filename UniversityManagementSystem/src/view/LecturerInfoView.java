@@ -9,11 +9,8 @@ import java.util.List;
 
 import controller.TeachDAO;
 import controller.LecturerDAO;
-import controller.StudentDAO;
 import controller.CourseDAO;
-import controller.EnrollmentDAO;
 import model.Teach;
-import model.Enrollment;
 import model.Lecturer;
 
 public class LecturerInfoView extends JFrame {
@@ -24,7 +21,7 @@ public class LecturerInfoView extends JFrame {
 	private LecturerDAO lecturerDAO;
 	private TeachDAO teachDAO;
 	private CourseDAO courseDAO;
-
+ 
 	public LecturerInfoView() {
 		lecturerDAO = new LecturerDAO();
 		teachDAO = new TeachDAO();
@@ -76,10 +73,7 @@ public class LecturerInfoView extends JFrame {
 
 		Lecturer lecturer = lecturerDAO.getAllLecturersMap().get(lecturerName);
 		if (lecturer != null) {
-			lecturerDetailsArea
-					.setText("Name: " + lecturer.getName() + "\nGender: " + (lecturer.getGender() ? "Male" : "Female")
-							+ "\nDate of Birth: " + lecturer.getDOB() + "\nLecturer ID: " + lecturer.getLecturerID());
-
+			lecturerDetailsArea.setText(lecturer.view());
 			updateCourseTable(lecturer.getLecturerID());
 		} else {
 			lecturerDetailsArea.setText("Lecturer not found");

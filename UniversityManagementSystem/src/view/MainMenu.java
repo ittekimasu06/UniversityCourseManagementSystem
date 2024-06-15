@@ -3,7 +3,9 @@ package view;
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.plaf.FontUIResource;
 import java.awt.*;
+import java.util.Enumeration;
 
 public class MainMenu extends JFrame {
 	private static final long serialVersionUID = -8847100719270429083L;
@@ -11,8 +13,10 @@ public class MainMenu extends JFrame {
     private JPanel contentPanel;
 
     public MainMenu() {
+    	setUIFont(new FontUIResource("Aptos", Font.PLAIN, 14)); // set font mặc định cho tất cả các component
+    	
         setTitle("University Management System");
-        setSize(1000, 800);
+        setSize(1200, 800);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
@@ -48,6 +52,17 @@ public class MainMenu extends JFrame {
 
         // thêm JSplitPane vào JFrame
         add(splitPane);
+    }
+    
+    public static void setUIFont(FontUIResource f) {
+        Enumeration<Object> keys = UIManager.getDefaults().keys();
+        while (keys.hasMoreElements()) {
+            Object key = keys.nextElement();
+            Object value = UIManager.get(key);
+            if (value instanceof FontUIResource) {
+                UIManager.put(key, f);
+            }
+        }
     }
 
     public static void main(String[] args) {

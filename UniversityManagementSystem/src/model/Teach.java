@@ -1,8 +1,8 @@
 package model;
 
 public class Teach {
-	String lectureID;
-	String courseID;
+	private String lectureID;
+	private String courseID;
 	
 	public Teach(String lectureID, String courseID) {
 		this.lectureID = lectureID;

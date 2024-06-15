@@ -36,5 +36,5 @@ public abstract class Person {
     	return dateOfBirth;
     }
     
-    public abstract void view();
+    public abstract String view();
 }

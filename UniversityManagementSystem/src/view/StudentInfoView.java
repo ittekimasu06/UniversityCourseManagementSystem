@@ -21,7 +21,7 @@ public class StudentInfoView extends JFrame {
     private StudentDAO studentDAO;
     private EnrollmentDAO enrollmentDAO;
     private CourseDAO courseDAO;
-
+ 
     public StudentInfoView() {
         studentDAO = new StudentDAO();
         enrollmentDAO = new EnrollmentDAO();
@@ -45,7 +45,6 @@ public class StudentInfoView extends JFrame {
                 displayStudentInfo((String) studentComboBox.getSelectedItem());
             }
         });
-
         studentDetailsArea = new JTextArea();
         studentDetailsArea.setEditable(false);
 
@@ -72,13 +71,8 @@ public class StudentInfoView extends JFrame {
         }
 
         Student student = studentDAO.getAllStudentsMap().get(studentName);
-        if (student != null) {
-            studentDetailsArea.setText("Name: " + student.getName() +
-                    "\nGender: " + (student.getGender() ? "Male" : "Female") +
-                    "\nDate of Birth: " + student.getDOB() +
-                    "\nStudent ID: " + student.getStudentID() +
-                    "\nGPA: " + student.getGpa());
-
+        if (student != null) {    
+            studentDetailsArea.setText(student.view());
             updateCourseTable(student.getStudentID());
         } else {
             studentDetailsArea.setText("Student not found");

@@ -22,7 +22,7 @@ public class StudentEnrollCourse extends JPanel {
     private StudentDAO studentDAO;
     private CourseDAO courseDAO;
     private EnrollmentDAO enrollDAO;
-
+ 
     public StudentEnrollCourse() {
         studentDAO = new StudentDAO();
         courseDAO = new CourseDAO();
@@ -106,6 +106,12 @@ public class StudentEnrollCourse extends JPanel {
         String studentID = studentDAO.getStudentIDByName(studentName);
         String courseID = courseDAO.getCourseIDByName(courseName);
         double mark = Double.parseDouble(markField.getText());
+        
+     // Kiểm tra số lượng sinh viên đã đăng ký
+        if (enrollDAO.isCourseFull(courseID)) {
+            JOptionPane.showMessageDialog(this, "Course is full. Enrollment failed.");
+            return;
+        }
 
         boolean success = enrollDAO.enrollStudentInCourseAndAssignMark(studentID, courseID, mark);
         if (success) {
@@ -140,6 +146,7 @@ public class StudentEnrollCourse extends JPanel {
         enrollTable.setModel(model);
     }
     
+   
     private void refreshEnrollTable() {
         displayEnrollments();
     }
