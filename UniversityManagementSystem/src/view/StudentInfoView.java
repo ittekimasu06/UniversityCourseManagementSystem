@@ -69,7 +69,6 @@ public class StudentInfoView extends JFrame {
         if (studentName == null || studentName.isEmpty()) {
             return;
         }
-
         Student student = studentDAO.getAllStudentsMap().get(studentName);
         if (student != null) {    
             studentDetailsArea.setText(student.view());
@@ -82,8 +81,7 @@ public class StudentInfoView extends JFrame {
 
     private void updateCourseTable(String studentID) {
         DefaultTableModel model = (DefaultTableModel) courseTable.getModel();
-        model.setRowCount(0); // clear dữ liệu
-
+        clearCourseTable();
         List<Enrollment> enrollments = enrollmentDAO.getAllEnrollments();
         for (Enrollment enrollment : enrollments) {
         	String courseName = courseDAO.getCourseNameByID(enrollment.getCourseID());
@@ -96,6 +94,6 @@ public class StudentInfoView extends JFrame {
 
     private void clearCourseTable() {
         DefaultTableModel model = (DefaultTableModel) courseTable.getModel();
-        model.setRowCount(0);
+        model.setRowCount(0); //clear dữ liệu
     }
 }

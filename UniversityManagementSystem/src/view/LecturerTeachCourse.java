@@ -73,6 +73,8 @@ public class LecturerTeachCourse extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 refreshTeachesTable();
+                refreshLecturerNameComboBox();
+                refreshCourseNameComboBox();
             }
         });
         buttonPanel.add(refreshButton);
@@ -136,6 +138,17 @@ public class LecturerTeachCourse extends JPanel {
         teachTable.setModel(model);
     }
     
+    //làm mới combobox tên lecturer
+    private void refreshLecturerNameComboBox() {
+        lecturerNameComboBox.removeAllItems();
+        populateLecturerNameComboBox();
+    }
+    
+    //làm mới combobox tên course
+    private void refreshCourseNameComboBox() {
+        courseNameComboBox.removeAllItems();
+        populateCourseNameComboBox();
+    }
     private void refreshTeachesTable() {
     	displayTeaches();
     }

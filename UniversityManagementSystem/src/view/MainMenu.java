@@ -13,7 +13,7 @@ public class MainMenu extends JFrame {
     private JPanel contentPanel;
 
     public MainMenu() {
-    	setUIFont(new FontUIResource("Aptos", Font.PLAIN, 14)); // set font mặc định cho tất cả các component
+    	setUIFont(new FontUIResource("Sans", Font.PLAIN, 14)); // set font mặc định cho tất cả các component
     	
         setTitle("University Management System");
         setSize(1200, 800);

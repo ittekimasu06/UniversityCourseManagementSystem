@@ -70,6 +70,8 @@ public class StudentEnrollCourse extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 refreshEnrollTable();
+                refreshStudentNameComboBox();
+                refreshCourseNameComboBox();
             }
         });
         buttonPanel.add(refreshButton);
@@ -146,7 +148,19 @@ public class StudentEnrollCourse extends JPanel {
         enrollTable.setModel(model);
     }
     
-   
+    //làm mới combobox tên student
+    private void refreshStudentNameComboBox() {
+        studentNameComboBox.removeAllItems();
+        populateStudentNameComboBox();
+    }
+    
+    //làm mới combobox tên course
+    private void refreshCourseNameComboBox() {
+        courseNameComboBox.removeAllItems();
+        populateCourseNameComboBox();
+    }
+    
+    //làm mới bảng 
     private void refreshEnrollTable() {
         displayEnrollments();
     }

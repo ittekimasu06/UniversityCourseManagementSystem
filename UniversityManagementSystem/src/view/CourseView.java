@@ -86,15 +86,15 @@ public class CourseView extends JPanel {
             }
         });
         buttonPanel.add(searchButton);
-
-//        JButton backButton = new JButton("Back");
-//        backButton.addActionListener(new ActionListener() {
-//            @Override
-//            public void actionPerformed(ActionEvent e) {
-//                ((CardLayout) getParent().getLayout()).show(getParent(), "MainMenu");
-//            }
-//        });
-//        buttonPanel.add(backButton);
+        
+        JButton courseInfoButton = new JButton("Course Info");
+        courseInfoButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                openCourseInfoView();
+            }
+        });
+        buttonPanel.add(courseInfoButton);
         
         JButton refreshButton = new JButton("Refresh");
         refreshButton.addActionListener(new ActionListener() {
@@ -207,6 +207,16 @@ public class CourseView extends JPanel {
         }
 
         courseTable.setModel(model); // đặt mô hình dữ liệu cho JTable
+    }
+    
+    private void openCourseInfoView() {
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                CourseInfoView courseInfoView = new CourseInfoView();
+                courseInfoView.setVisible(true);
+            }
+        });
     }
 
     private void refreshCourseTable() {
