@@ -1,4 +1,4 @@
-#My OOP Final Project
+# My OOP Final Project
 This Project demonstrate how a UCMS (University Course Management System) would work, or at least how I demonstrate it :)
 
 Everything used in this project:
@@ -7,7 +7,7 @@ Everything used in this project:
 - JDBC for database connectivity
 - Swing for GUI 
 
-##How to run 
+## How to run 
 Since I'm a newbie, you have to do all the following steps in order to run the program.
 
 - Create a MySQL database with the following query:
