@@ -65,6 +65,25 @@ public class StudentEnrollCourse extends JPanel {
         });
         buttonPanel.add(enrollButton);
         
+        
+        JButton updateButton = new JButton("Update Mark");
+        updateButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                updateEnrollmentMark();
+            }
+        });
+        buttonPanel.add(updateButton);
+        
+        JButton deleteButton = new JButton("Delete");
+        deleteButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                deleteEnrollment();
+            }
+        });
+        buttonPanel.add(deleteButton);
+        
         JButton refreshButton = new JButton("Refresh");
         refreshButton.addActionListener(new ActionListener() {
             @Override
@@ -124,10 +143,47 @@ public class StudentEnrollCourse extends JPanel {
             JOptionPane.showMessageDialog(this, "Failed to enroll student in course. Please try again.");
         }
     }
+   
 
     private void clearFields() {
         markField.setText("");
     }
+    
+    private void updateEnrollmentMark() {
+        String studentName = (String) studentNameComboBox.getSelectedItem();
+        String courseName = (String) courseNameComboBox.getSelectedItem();
+        
+        String studentID = studentDAO.getStudentIDByName(studentName);
+        String courseID = courseDAO.getCourseIDByName(courseName);
+        double newMark = Double.parseDouble(markField.getText());
+        
+        boolean success = enrollDAO.updateEnrollmentMark(studentID, courseID, newMark);
+        if (success) {
+            JOptionPane.showMessageDialog(this, "Mark updated successfully!");
+            displayEnrollments();
+            clearFields();
+        } else {
+            JOptionPane.showMessageDialog(this, "Failed to update mark. Please try again.");
+        }
+    }
+    
+    private void deleteEnrollment() {
+        String studentName = (String) studentNameComboBox.getSelectedItem();
+        String courseName = (String) courseNameComboBox.getSelectedItem();
+        
+        String studentID = studentDAO.getStudentIDByName(studentName);
+        String courseID = courseDAO.getCourseIDByName(courseName);
+        
+        boolean success = enrollDAO.deleteEnrollment(studentID, courseID);
+        if (success) {
+            JOptionPane.showMessageDialog(this, "Enrollment deleted successfully!");
+            displayEnrollments();
+            clearFields();
+        } else {
+            JOptionPane.showMessageDialog(this, "Failed to delete enrollment. Please try again.");
+        }
+    }
+   
 
     private void displayEnrollments() {
         DefaultTableModel model = new DefaultTableModel();

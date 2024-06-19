@@ -59,14 +59,14 @@ public class LecturerTeachCourse extends JPanel {
         });
         buttonPanel.add(assignButton);
 
-//        JButton backButton = new JButton("Back");
-//        backButton.addActionListener(new ActionListener() {
-//            @Override
-//            public void actionPerformed(ActionEvent e) {
-//                ((CardLayout) getParent().getLayout()).show(getParent(), "MainMenu");
-//            }
-//        });
-//        buttonPanel.add(backButton);
+        JButton deleteButton = new JButton("Delete");
+        deleteButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                deleteTeach();
+            }
+        });
+        buttonPanel.add(deleteButton);
         
         JButton refreshButton = new JButton("Refresh");
         refreshButton.addActionListener(new ActionListener() {
@@ -120,6 +120,23 @@ public class LecturerTeachCourse extends JPanel {
         }
     }
 
+    private void deleteTeach() {
+        String lecturerName = (String) lecturerNameComboBox.getSelectedItem();
+        String courseName = (String) courseNameComboBox.getSelectedItem();
+        
+        String lecturerID = lecturerDAO.getLecturerIDByName(lecturerName);
+        String courseID = courseDAO.getCourseIDByName(courseName);
+        
+        boolean success = teachDAO.deleteTeach(lecturerID, courseID);
+        if (success) {
+            JOptionPane.showMessageDialog(this, "Enrollment deleted successfully!");
+            displayTeaches();
+        } else {
+            JOptionPane.showMessageDialog(this, "Failed to delete enrollment. Please try again.");
+        }
+    }
+   
+    
     private void displayTeaches() {
         DefaultTableModel model = new DefaultTableModel();
         model.addColumn("Lecturer Name");

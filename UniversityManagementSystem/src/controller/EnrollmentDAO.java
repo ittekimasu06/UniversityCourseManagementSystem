@@ -17,7 +17,7 @@ public class EnrollmentDAO {
 	
 	//tạo một enrollment mới (cho một student enroll một course)
     public boolean enrollStudentInCourseAndAssignMark(String studentID, String courseID, double mark) {
-        String sql = "INSERT INTO Enroll (studentID, courseID, mark) VALUES (?, ?, ?)";
+    	String sql = "INSERT INTO Enroll (studentID, courseID, mark) VALUES (?, ?, ?)";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, studentID);
             statement.setString(2, courseID);
@@ -46,7 +46,7 @@ public class EnrollmentDAO {
         return false;
     }
     
-    //trả về list các enrollment 
+    //trả về list các  bản ghi Enrollment 
     public List<Enrollment> getAllEnrollments() {
         List<Enrollment> enrollments = new ArrayList<>();
         String sql = "SELECT * FROM Enroll";
@@ -62,6 +62,36 @@ public class EnrollmentDAO {
             e.printStackTrace();
         }
         return enrollments;
+    }
+    
+    
+    //cập nhật điểm cho sinh viên
+    public boolean updateEnrollmentMark(String studentID, String courseID, double newMark) {
+        String sql = "UPDATE Enroll SET mark = ? WHERE studentID = ? AND courseID = ?";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setDouble(1, newMark);
+            statement.setString(2, studentID);
+            statement.setString(3, courseID);
+            int rowCount = statement.executeUpdate();
+            return rowCount > 0; // nếu rowCount > 0, câu lệnh đã thành công
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+    
+    //xóa một bản ghi enrollment
+    public boolean deleteEnrollment(String studentID, String courseID) {
+        String sql = "DELETE FROM Enroll WHERE studentID = ? AND courseID = ?";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, studentID);
+            statement.setString(2, courseID);
+            int rowCount = statement.executeUpdate();
+            return rowCount > 0; // nếu rowCount > 0, câu lệnh đã thành công
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
     
 }

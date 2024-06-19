@@ -29,7 +29,7 @@ public class TeachDAO {
         }
     }
 
-    // Method to get all Teach records
+    // trả về list các bản ghi Teach
     public List<Teach> getAllTeach() {
         List<Teach> teaches = new ArrayList<>();
         String sql = "SELECT * FROM Teach";
@@ -45,5 +45,19 @@ public class TeachDAO {
         }
         return teaches;
     }   
+    
+    //xóa một bản ghi Teach
+    public boolean deleteTeach(String lecturerID, String courseID) {
+        String sql = "DELETE FROM Teach WHERE lecturerID = ? AND courseID = ?";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, lecturerID);
+            statement.setString(2, courseID);
+            int rowCount = statement.executeUpdate();
+            return rowCount > 0; // nếu rowCount > 0, câu lệnh đã thành công
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
     
 }
